@@ -1,34 +1,34 @@
-# Synology Deployment
+# Script-Based Deployment
 
-This deployment path runs the Flask app directly with Waitress. It does not use
-Docker, Apache or Nginx.
+This document describes running Cast Control Panel on a Unix-like host with the
+provided shell scripts and Waitress.
 
 ## Directory Layout
 
-Recommended location:
+Example location:
 
 ```text
-/volume1/path-to-app
+/opt/cast-panel
 ```
 
-Recommended support directories:
+Support directories:
 
 ```text
-/volume1/path-to-app/instance
-/volume1/path-to-app/logs
-/volume1/path-to-app/media
-/volume1/path-to-app/backups
-/volume1/tmp-pip
+/opt/cast-panel/instance
+/opt/cast-panel/logs
+/opt/cast-panel/media
+/opt/cast-panel/backups
+/tmp/cast-panel-pip
 ```
 
 ## Initial Install
 
 ```sh
-cd /volume1/path-to-app
+cd /opt/cast-panel
 python3 -m venv .venv
 . .venv/bin/activate
 
-export TMPDIR=/volume1/tmp-pip
+export TMPDIR=/tmp/cast-panel-pip
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 
@@ -61,8 +61,8 @@ flask --app wsgi:app init-admin
 
 ```sh
 chmod +x scripts/start.sh scripts/stop.sh scripts/backup.sh
-APP_DIR=/volume1/path-to-app scripts/start.sh
-APP_DIR=/volume1/path-to-app scripts/stop.sh
+APP_DIR=/opt/cast-panel scripts/start.sh
+APP_DIR=/opt/cast-panel scripts/stop.sh
 ```
 
 The start script:
@@ -76,31 +76,28 @@ The start script:
 - writes the process ID to `instance/cast-panel.pid`;
 - refuses to start a second instance when the PID is still running.
 
-## DSM Startup Task
+## Autostart
 
-In Synology DSM:
-
-1. Open Control Panel.
-2. Open Task Scheduler.
-3. Create a Triggered Task.
-4. Choose User-defined script.
-5. Set Event to Boot-up.
-6. Use a user that can read and write the application directory.
-7. Use this script:
+Use your host's service manager or task scheduler to run:
 
 ```sh
-APP_DIR=/volume1/path-to-app /volume1/path-to-app/scripts/start.sh
+APP_DIR=/opt/cast-panel /opt/cast-panel/scripts/start.sh
 ```
 
-Keep the panel available only on LAN or through Tailscale. Do not expose it to
-the public internet.
+On shutdown, run:
+
+```sh
+APP_DIR=/opt/cast-panel /opt/cast-panel/scripts/stop.sh
+```
+
+Keep the panel available only on a trusted network or private VPN.
 
 ## Backup
 
 Run:
 
 ```sh
-APP_DIR=/volume1/path-to-app scripts/backup.sh
+APP_DIR=/opt/cast-panel scripts/backup.sh
 ```
 
 The backup archive is written to `backups/` and includes existing configuration,
@@ -110,18 +107,18 @@ large; back them up separately if needed.
 ## Update
 
 ```sh
-cd /volume1/path-to-app
+cd /opt/cast-panel
 scripts/backup.sh
 scripts/stop.sh
 git pull --ff-only
 . .venv/bin/activate
-export TMPDIR=/volume1/tmp-pip
+export TMPDIR=/tmp/cast-panel-pip
 python -m pip install -r requirements.txt
 python -m pytest
 scripts/start.sh
 ```
 
-If tests cannot run on the NAS due to limited resources, at minimum verify:
+At minimum, verify:
 
 ```sh
 curl http://127.0.0.1:5000/health

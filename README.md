@@ -1,290 +1,225 @@
 # Cast Control Panel
 
-Lekki panel webowy Flask do sterowania urządzeniem Google Cast / Android TV z Synology NAS.
+A lightweight Flask web panel for controlling a local Google Cast or Android TV
+device. It focuses on local media playback, device status, basic remote
+controls, safe upload handling and a small admin UI.
 
-## Założenia
+## Features
 
-- Python 3.8;
-- Synology DSM;
-- brak Dockera;
-- dostęp zdalny przez Tailscale;
-- lokalne połączenie NAS → Android TV / Chromecast;
-- media przechowywane lokalnie na NAS-ie.
+- Device status dashboard with online/offline state, active app, volume, mute
+  state and media status when the receiver exposes it.
+- Local administrator account with hashed password, Flask sessions and CSRF.
+- Persistent settings in `instance/config.json`.
+- Image upload and casting for JPG/JPEG, PNG and WebP.
+- Audio upload and playback for MP3, AAC/M4A, OGG and WAV.
+- Video upload and playback for MP4 and WebM.
+- Basic remote controls: volume, mute/unmute, play, pause, stop and seek.
+- Slideshow, queue and presets.
+- Rotated application logs and sanitized audit logs.
+- Simple WSGI deployment with Waitress.
 
-## Planowane funkcje
+## Requirements
 
-- status urządzenia i aktywnej aplikacji;
-- wyświetlanie obrazów;
-- odtwarzanie audio i wideo;
-- sterowanie play/pause/stop/seek;
-- głośność i mute;
-- biblioteka multimediów;
-- pokazy slajdów;
-- presety;
-- kolejka;
-- konfiguracja i eksport ustawień;
-- lokalne konto administratora;
-- techniczne logi operacji.
+- Python 3.8 compatible runtime.
+- `pip`.
+- Network access from the host running the app to the Cast device, usually TCP
+  8009.
+- A LAN address for the app host that the Cast device can reach.
+- A configured Cast device IP address. The app can connect with
+  `known_hosts=[CAST_IP]` and does not rely only on mDNS.
 
-## Wymagania
-
-- Python 3.8;
-- działający `pip`;
-- działające połączenie z urządzeniem Cast po TCP 8009;
-- pakiet `pychromecast` zgodny z Pythonem 3.8;
-- dostęp urządzenia Cast do lokalnego URL-a NAS-a.
-
-## Docelowa lokalizacja
-
-Przykład:
-
-```text
-/volume1/path-to-app
-```
-
-Zalecane katalogi:
-
-```text
-/volume1/path-to-app/media
-/volume1/path-to-app/logs
-/volume1/path-to-app/instance
-/volume1/tmp-pip
-```
-
-## Instalacja deweloperska
+## Installation
 
 ```bash
-cd /volume1/path-to-app
+cd /path/to/cast-panel
 
-python3 -m venv .venv
+python -m venv .venv
 source .venv/bin/activate
 
-export TMPDIR=/volume1/tmp-pip
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
+cp .env.example .env
 ```
 
-Jeżeli `venv` nie jest dostępne w pakiecie Pythona Synology, użyj instalacji użytkownika i odnotuj to w dokumentacji środowiska. Nie instaluj zależności systemowo bez potrzeby.
+Edit `.env` and set at least:
 
-Minimalna konfiguracja startowa znajduje się w `.env.example`. Skopiuj ją do
-`.env` i ustaw co najmniej `SECRET_KEY`, `MEDIA_DIRECTORY` oraz
-`LOG_DIRECTORY` zgodnie ze ścieżkami na NAS-ie.
+- `SECRET_KEY`
+- `CAST_IP`
+- `APP_HOST`
+- `APP_PORT`
+- `MEDIA_DIRECTORY`
+- `LOG_DIRECTORY`
+- `AUDIT_LOG_PATH`
 
-Weryfikacja bootstrapu:
-
-```bash
-python -m pytest
-python -m ruff check .
-python run.py
-```
-
-Pierwsze konto administratora utwórz ręcznie przez CLI. Aplikacja nie ma
-domyślnego loginu ani hasła:
+Create the first administrator account:
 
 ```bash
 flask --app wsgi:app init-admin
 ```
 
-Endpoint diagnostyczny:
+There is no default username or password.
 
-```text
-GET /health
-```
+## Run
 
-Poprawna odpowiedź:
-
-```json
-{"status": "ok"}
-```
-
-Uwaga: pierwszy bootstrap został lokalnie sprawdzony na Pythonie 3.12.4,
-ponieważ taki interpreter jest dostępny w środowisku roboczym. Zależności
-w `requirements.txt` są przypięte do wersji deklarujących zgodność z
-Pythonem 3.8 albo wcześniejszym. Na Synology należy uruchomić te same testy
-pod docelowym Pythonem 3.8.
-
-## Uruchomienie
-
-MVP:
+Development:
 
 ```bash
 python run.py
 ```
 
-Produkcja lokalna:
+Local production-style run:
 
 ```bash
 waitress-serve --host=0.0.0.0 --port=5000 wsgi:app
 ```
 
-Panel powinien być udostępniany wyłącznie przez LAN lub Tailscale.
+Health check:
 
-## Konfiguracja
+```text
+GET /health
+```
 
-Konfiguracja ma być przechowywana w:
+Expected response:
+
+```json
+{"status": "ok"}
+```
+
+## Configuration
+
+User-editable settings are stored in:
 
 ```text
 instance/config.json
 ```
 
-Sekrety i hash hasła nie mogą trafiać do Git.
-
-Lokalne konto administratora jest przechowywane w SQLite:
+The local admin account is stored in SQLite:
 
 ```text
 instance/app.sqlite3
 ```
 
-Hasła są hashowane przez Werkzeug. Formularze logowania i ustawień są
-chronione przez CSRF. Import i eksport ustawień obejmuje tylko publiczne pola
-konfiguracji, bez sekretów aplikacji i bez hashy haseł.
+Secrets and password hashes must not be committed.
 
-Przykładowe ustawienia:
+Example settings:
 
 ```json
 {
   "cast_ip": "192.168.1.50",
   "nas_lan_ip": "192.168.1.10",
   "app_port": 5000,
-  "media_directory": "/volume1/path-to-app/media",
+  "media_directory": "/path/to/cast-panel/media",
   "max_upload_mb": 100,
   "max_volume": 0.5,
   "default_audio_volume": 0.2,
   "cast_timeout_seconds": 10,
+  "status_refresh_seconds": 5,
   "monitor_app_changes": false
 }
 ```
 
-Na etapie rdzenia Cast dostępna jest warstwa `CastService`, która przyjmuje
-`CAST_IP` i `CAST_TIMEOUT_SECONDS` z konfiguracji aplikacji. Serwis łączy się
-przez `known_hosts=[CAST_IP]`, nie polega wyłącznie na mDNS i zwraca własne
-słowniki statusu zamiast obiektów `pychromecast`.
+Settings validation covers IP addresses, ports, media directory, upload limit,
+volume limits and Cast timeout. The media directory must stay within the project
+base directory.
 
-Obsługiwane błędy domenowe:
+## Dashboard
 
-- `CastDeviceUnavailable`;
-- `CastConnectionTimeout`;
-- `CastUnsupportedCommand`;
-- `CastMediaLaunchFailed`.
+After login, `/` shows the device status:
 
-Testy tej warstwy używają mockowanego adaptera i nie wymagają fizycznego
-urządzenia Cast.
+- online/offline;
+- device name and model;
+- active app and `app_id`;
+- standby and active input;
+- volume and mute;
+- media status when available.
 
-Panel ustawień zapisuje konfigurację trwale w `instance/config.json`.
-Walidowane są adresy IP, port, katalog mediów, limity uploadu, poziomy
-głośności i timeout Cast. Katalog mediów musi znajdować się pod katalogiem
-projektu, co ogranicza ryzyko przypadkowego udostępnienia obcych ścieżek.
+`GET /status` returns the same status as JSON. Cast errors are mapped to an
+offline payload without exposing tracebacks. The frontend polls this endpoint and
+keeps only one active status request.
 
-## Dashboard statusu
+The dashboard also includes basic remote controls. Backend validation enforces
+`max_volume`, so the frontend cannot accidentally set 100%. Successful commands
+return a refreshed device status. `COMMAND_RATE_LIMIT_SECONDS` limits repeated
+control commands.
 
-Po zalogowaniu pierwszym ekranem jest dashboard pod `/`. Widok pokazuje stan
-online/offline, nazwę urządzenia, model, aktywną aplikację, `app_id`, standby,
-aktywne wejście, głośność, mute i standardowy status mediów, jeśli urządzenie
-go udostępnia.
+## Media Library
 
-Status jest dostępny również jako JSON:
+`/media` lets an authenticated admin upload, preview, play and delete media.
 
-```text
-GET /status
-```
-
-Endpoint jest chroniony logowaniem i mapuje błędy Cast na odpowiedź offline
-bez tracebacka. Frontend odświeża status prostym pollingiem AJAX zgodnie z
-`status_refresh_seconds` z ustawień i utrzymuje tylko jedno aktywne zapytanie.
-
-Dashboard zawiera też podstawowy pilot:
-
-- ustawianie głośności suwakiem;
-- mute/unmute;
-- play/pause/stop;
-- seek, gdy dostępny jest standardowy status mediów.
-
-Komendy pilota są wysyłane do endpointów `/remote/*` metodą POST i wymagają
-zalogowania oraz CSRF. Backend zawsze wymusza `max_volume` z ustawień, więc
-frontend nie może przypadkiem ustawić 100%. Każda poprawnie wykonana komenda
-zwraca świeży status urządzenia. Prosty rate limit `COMMAND_RATE_LIMIT_SECONDS`
-ogranicza zbyt szybkie powtarzanie tej samej komendy.
-
-## Biblioteka obrazów
-
-Widok `/media` pozwala zalogowanemu administratorowi przesłać, podejrzeć,
-usunąć i odtworzyć media na urządzeniu Cast. Obsługiwane typy obrazów:
+Supported images:
 
 - JPG/JPEG;
 - PNG;
 - WebP.
 
-Obsługiwane typy audio:
+Supported audio:
 
 - MP3;
 - AAC/M4A;
 - OGG;
 - WAV.
 
-Obsługiwane typy wideo:
+Supported video:
 
 - MP4;
 - WebM.
 
-Upload sprawdza rozszerzenie, MIME, podstawową sygnaturę dla obrazów, limit
-`max_upload_mb` i sanityzuje nazwę pliku. Pliki są zapisywane wyłącznie w
-skonfigurowanym katalogu mediów.
+Uploads validate extension, MIME type, image signatures where applicable, file
+size and sanitized filenames. Files are stored only in the configured media
+directory.
 
-Aplikacja nie transkoduje plików i nie obiecuje obsługi dowolnego kodeka.
-Dla wideo zalecany jest MP4 H.264 + AAC, bo jest najlepiej wspierany przez
-Google Cast / Android TV. WebM i inne kontenery mogą zależeć od konkretnego
-odbiornika.
+The app does not transcode media and does not promise arbitrary codec support.
+For video, MP4 with H.264 video and AAC audio is recommended for best Cast
+compatibility.
 
-Publiczny endpoint plików:
+Public media endpoint:
 
 ```text
 GET /media/files/<filename>
 ```
 
-Ten endpoint nie wymaga sesji Flask, ponieważ urządzenie Cast musi móc pobrać
-plik bez ciasteczek logowania. Odczyt nadal jest ograniczony do katalogu
-`media`, blokuje path traversal i obsługuje tylko dozwolone typy obrazów.
+This endpoint is intentionally accessible without a Flask session because the
+Cast device must fetch media without login cookies. Access is still limited to
+the media directory, blocks path traversal and serves only supported media
+types.
 
-URL wysyłany do Cast jest budowany z lokalnego adresu NAS-a i portu aplikacji:
+The URL sent to Cast is built from the configured local host IP and app port:
 
 ```text
 http://<nas_lan_ip>:<app_port>/media/files/<filename>
 ```
 
-Przycisk „Wyświetl” albo „Odtwórz” uruchamia Default Media Receiver przez
-`CastService`. Przy audio aplikacja przed startem ustawia bezpieczną domyślną
-głośność `default_audio_volume`, nie przekraczając `max_volume`, i zapamiętuje
-poprzedni poziom do przywrócenia po `Stop`. Widok pokazuje potwierdzenie przed
-przerwaniem aktywnej aplikacji oraz udostępnia przycisk `Stop`.
+For audio playback, the app can apply `default_audio_volume`, capped by
+`max_volume`, and restore the previous volume after `Stop`.
 
-Biblioteka obsługuje też proste scenariusze:
+## Slideshow, Queue And Presets
 
-- pokaz slajdów z wyborem obrazów i czasem slajdu;
-- kolejkę wybranych mediów;
-- presety zapisywane w `instance/presets.json`.
+The media library supports:
 
-Aktywne zadanie jest trzymane wyłącznie w pamięci procesu. Aplikacja dopuszcza
-tylko jedno aktywne zadanie naraz, pozwala je zatrzymać i nie wznawia komend
-samoczynnie po restarcie. Presety przetrwają restart, ale uruchomienie presetu
-zawsze wymaga jawnej akcji użytkownika.
+- image slideshows with configurable slide duration;
+- queues of selected media;
+- presets stored in `instance/presets.json`.
 
-## Logi i audyt
+Only one playback job can run at a time. Active jobs live only in memory, so a
+process restart never resumes commands automatically. Presets persist across
+restarts, but running them always requires an explicit user action.
 
-Aplikacja zapisuje dwa typy logów w katalogu `logs`:
+## Logs And Audit
 
-- `app.log` - techniczne logi aplikacji Flask;
-- `audit.log` - rotowany JSONL z operacjami panelu.
+The app writes rotated logs:
 
-Rozmiar i liczba kopii logów są kontrolowane przez `LOG_MAX_BYTES` oraz
-`LOG_BACKUP_COUNT`, więc pliki nie rosną bez końca. Panel `/audit` pokazuje
-ostatnie operacje i ostatnie błędy.
+- `app.log` for Flask/application diagnostics;
+- `audit.log` as JSONL for panel operations.
 
-Audyt zapisuje użytkownika, nazwę komendy, wynik, błąd i ograniczone szczegóły
-techniczne. Sekrety, hasła, tokeny, ciasteczka, nagłówki, pełne URL-e mediów,
-tytuły i `content_id` są redagowane albo nie są przekazywane do audytu. Audyt
-nie jest historią oglądania.
+`LOG_MAX_BYTES` and `LOG_BACKUP_COUNT` control rotation. `/audit` shows recent
+operations and recent errors.
 
-Monitoring zmian aktywnej aplikacji Cast jest opcjonalny i domyślnie wyłączony:
+Audit entries store the user, command name, result, error and limited technical
+details. Passwords, tokens, cookies, headers, full media URLs, titles and
+`content_id` are redacted or not sent to audit at all. The audit log is not a
+watch history.
+
+Active app change monitoring is optional and disabled by default:
 
 ```json
 {
@@ -292,58 +227,37 @@ Monitoring zmian aktywnej aplikacji Cast jest opcjonalny i domyślnie wyłączon
 }
 ```
 
-Po jawnym włączeniu zapisywane są tylko techniczne informacje o zmianie
-aplikacji, takie jak `app_id` i nazwa aplikacji, bez tytułów odtwarzanych treści.
+When enabled, only technical app change data such as `app_id` and app name is
+recorded.
 
-## Start po uruchomieniu DSM
+## Deployment
 
-Wdrożenie na Synology jest opisane w `docs/SYNOLOGY_DEPLOYMENT.md`.
-Aplikacja ma skrypt startowy:
+For a simple Unix-like host, the repository includes:
 
 ```text
 scripts/start.sh
-```
-
-oraz skrypt zatrzymania:
-
-```text
 scripts/stop.sh
-```
-
-Może być uruchamiana przez Harmonogram zadań DSM jako zadanie przy starcie
-systemu.
-
-Skrypt ma:
-
-- ustawić katalog roboczy;
-- aktywować środowisko;
-- ustawić `TMPDIR`, jeśli potrzebne;
-- uruchomić Waitress;
-- przekierować logi do pliku;
-- zapobiegać uruchomieniu drugiej instancji.
-
-Backup konfiguracji i bazy:
-
-```text
 scripts/backup.sh
 ```
 
-## Bezpieczeństwo
+The scripts set the working directory, load `.env`, activate `.venv`, start
+Waitress, write startup logs and use a PID file to avoid a second instance.
 
-- Nie wystawiaj portu aplikacji na publiczny internet.
-- Używaj Tailscale.
-- Ustaw silne hasło administratora.
-- Nie używaj domyślnych danych logowania.
-- Ogranicz głośność.
-- Nie pozwalaj użytkownikowi sterować dowolnym adresem IP.
-- Włącz CSRF i limit uploadu.
+Detailed script-based deployment notes are in
+`docs/SCRIPT_DEPLOYMENT.md`.
 
-## Licencja
+## Security Notes
 
-Do ustalenia przed publikacją. Dla projektu open source rozsądnym wyborem jest MIT lub Apache-2.0.
+- Keep the panel on a trusted network or behind a private VPN.
+- Use a strong admin password.
+- Do not commit `.env`, `instance/`, `logs/` or uploaded media.
+- Configure a conservative `max_volume`.
+- Configure Cast and host LAN IPs explicitly.
+- Keep CSRF enabled.
+- Do not use this as a public internet-facing service without additional
+  hardening.
 
 ## Credits
 
-Projekt korzysta z bibliotek wymienionych w `THIRD_PARTY_NOTICES.md`.
-Przed publikacją należy ponownie zweryfikować metadane licencji i wybrać
-licencję dla samej aplikacji.
+Third-party packages are listed in `THIRD_PARTY_NOTICES.md`.
+

@@ -36,15 +36,11 @@ def test_backup_script_includes_config_and_database():
     assert "tar -czf" in script
 
 
-def test_deployment_docs_do_not_require_docker_or_reverse_proxy():
-    docs = (ROOT / "docs" / "SYNOLOGY_DEPLOYMENT.md").read_text(encoding="utf-8")
+def test_deployment_docs_describe_script_based_run():
+    docs = (ROOT / "docs" / "SCRIPT_DEPLOYMENT.md").read_text(encoding="utf-8")
 
-    assert "does not use" in docs
-    assert "Docker" in docs
-    assert "Apache" in docs
-    assert "Nginx" in docs
-    assert "Task Scheduler" in docs
+    assert "Script-Based Deployment" in docs
+    assert "Autostart" in docs
     assert "scripts/start.sh" in docs
     assert "scripts/stop.sh" in docs
     assert "scripts/backup.sh" in docs
-
