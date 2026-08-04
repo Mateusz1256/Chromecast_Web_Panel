@@ -310,6 +310,19 @@ input:disabled {
   width: min(620px, 100%);
 }
 
+.audit-panel {
+  margin-top: 1rem;
+}
+
+.audit-entry {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.75rem;
+  background: #111215;
+  color: var(--text);
+}
+
 .volume-control,
 .seek-form {
   display: grid;

@@ -10,7 +10,7 @@ from flask import (
     session,
     url_for,
 )
-from flask_login import login_required
+from flask_login import current_user, login_required
 
 from app.services.cast_service import CastServiceError
 from app.services.media_service import MediaNotFoundError, MediaValidationError
@@ -36,10 +36,16 @@ def library():
 
         try:
             uploaded_file = request.files.get("media") or request.files.get("image")
-            media_service.save_media(uploaded_file)
+            saved_media = media_service.save_media(uploaded_file)
         except MediaValidationError as exc:
+            _audit("media.upload", False, str(exc))
             flash(str(exc), "error")
         else:
+            _audit(
+                "media.upload",
+                True,
+                details={"media_type": saved_media["media_type"]},
+            )
             flash("Media uploaded", "success")
         return redirect(url_for("media.library"))
 
@@ -90,8 +96,10 @@ def _play(filename):
                 _set_default_audio_volume(cast_service)
             result = cast_service.play_media(media_url, content_type)
     except (MediaValidationError, MediaNotFoundError, CastServiceError) as exc:
+        _audit("media.play", False, str(exc))
         flash(str(exc), "error")
     else:
+        _audit("media.play", True, details={"media_type": media_type})
         flash(result["message"], "success")
     return redirect(url_for("media.library"))
 
@@ -103,8 +111,10 @@ def delete(filename):
     try:
         media_service.delete(filename)
     except (MediaValidationError, MediaNotFoundError) as exc:
+        _audit("media.delete", False, str(exc))
         flash(str(exc), "error")
     else:
+        _audit("media.delete", True)
         flash("Image deleted", "success")
     return redirect(url_for("media.library"))
 
@@ -117,8 +127,10 @@ def stop():
         result = cast_service.stop()
         _restore_previous_volume(cast_service)
     except CastServiceError as exc:
+        _audit("media.stop", False, str(exc))
         flash(str(exc), "error")
     else:
+        _audit("media.stop", True)
         flash(result["message"], "success")
     return redirect(url_for("media.library"))
 
@@ -132,8 +144,10 @@ def start_slideshow():
         slide_seconds = float(request.form.get("slide_seconds", "5"))
         playback_service.start_slideshow(filenames, slide_seconds)
     except (ValueError, MediaValidationError, PlaybackJobAlreadyRunning) as exc:
+        _audit("job.slideshow.start", False, str(exc))
         flash(str(exc), "error")
     else:
+        _audit("job.slideshow.start", True, details={"count": len(filenames)})
         flash("Slideshow started", "success")
     return redirect(url_for("media.library"))
 
@@ -146,8 +160,10 @@ def start_queue():
     try:
         playback_service.start_queue(filenames)
     except (ValueError, MediaValidationError, PlaybackJobAlreadyRunning) as exc:
+        _audit("job.queue.start", False, str(exc))
         flash(str(exc), "error")
     else:
+        _audit("job.queue.start", True, details={"count": len(filenames)})
         flash("Queue started", "success")
     return redirect(url_for("media.library"))
 
@@ -159,8 +175,10 @@ def stop_job():
     try:
         playback_service.stop()
     except PlaybackJobNotRunning as exc:
+        _audit("job.stop", False, str(exc))
         flash(str(exc), "error")
     else:
+        _audit("job.stop", True)
         flash("Playback job stopping", "success")
     return redirect(url_for("media.library"))
 
@@ -182,8 +200,10 @@ def save_preset():
         stop_after_seconds = _optional_float(request.form.get("stop_after_seconds"))
         playback_service.save_preset(name, filename, volume, stop_after_seconds)
     except (ValueError, MediaValidationError) as exc:
+        _audit("preset.save", False, str(exc))
         flash(str(exc), "error")
     else:
+        _audit("preset.save", True)
         flash("Preset saved", "success")
     return redirect(url_for("media.library"))
 
@@ -195,8 +215,10 @@ def run_preset(name):
     try:
         playback_service.run_preset(name)
     except (ValueError, MediaValidationError, PlaybackJobAlreadyRunning) as exc:
+        _audit("preset.run", False, str(exc))
         flash(str(exc), "error")
     else:
+        _audit("preset.run", True)
         flash("Preset started", "success")
     return redirect(url_for("media.library"))
 
@@ -205,6 +227,7 @@ def run_preset(name):
 @login_required
 def delete_preset(name):
     current_app.extensions["playback_service"].delete_preset(name)
+    _audit("preset.delete", True)
     flash("Preset deleted", "success")
     return redirect(url_for("media.library"))
 
@@ -232,3 +255,13 @@ def _optional_float(value):
     if value is None or value == "":
         return None
     return float(value)
+
+
+def _audit(command, ok, error="", details=None):
+    current_app.extensions["audit_service"].record(
+        user=current_user.get_id(),
+        command=command,
+        ok=ok,
+        error=error,
+        details=details,
+    )

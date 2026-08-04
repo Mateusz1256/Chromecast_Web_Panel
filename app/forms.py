@@ -1,5 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import FloatField, IntegerField, PasswordField, StringField, SubmitField
+from wtforms import (
+    BooleanField,
+    FloatField,
+    IntegerField,
+    PasswordField,
+    StringField,
+    SubmitField,
+)
 from wtforms.validators import DataRequired, NumberRange
 
 
@@ -37,4 +44,5 @@ class SettingsForm(FlaskForm):
         "Status refresh seconds",
         validators=[DataRequired(), NumberRange(min=1, max=120)],
     )
+    monitor_app_changes = BooleanField("Monitor active app changes")
     submit = SubmitField("Save")

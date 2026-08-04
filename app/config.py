@@ -35,6 +35,10 @@ class AppConfig:
         "LOG_DIRECTORY",
         str(BASE_DIR / "logs"),
     )
+    AUDIT_LOG_PATH = os.environ.get(
+        "AUDIT_LOG_PATH",
+        str(BASE_DIR / "logs" / "audit.log"),
+    )
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
     LOG_MAX_BYTES = int(os.environ.get("LOG_MAX_BYTES", "1048576"))
     LOG_BACKUP_COUNT = int(os.environ.get("LOG_BACKUP_COUNT", "3"))

@@ -1,5 +1,5 @@
 from flask import Blueprint, current_app, jsonify, render_template
-from flask_login import login_required
+from flask_login import current_user, login_required
 
 from app.services.cast_service import CastServiceError
 
@@ -38,6 +38,12 @@ def _safe_status():
             "ok": False,
             "status": _offline_status("Unexpected Cast status error"),
         }
+    settings = current_app.extensions["settings_service"].load()
+    if settings.get("monitor_app_changes"):
+        current_app.extensions["audit_service"].record_app_change(
+            user=current_user.get_id(),
+            status=status_payload,
+        )
     return {"ok": True, "status": status_payload}
 
 

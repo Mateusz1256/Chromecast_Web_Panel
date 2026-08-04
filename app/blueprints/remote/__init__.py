@@ -79,13 +79,17 @@ def _run_command(command_name, command):
         _check_rate_limit(command_name)
         result = command(current_app.extensions["cast_service"])
     except RateLimitExceeded as exc:
+        _audit(command_name, False, str(exc))
         return _error_response(str(exc), 429)
     except CastUnsupportedCommand as exc:
+        _audit(command_name, False, str(exc))
         return _error_response(str(exc), 400)
     except CastServiceError as exc:
+        _audit(command_name, False, str(exc))
         return _error_response(str(exc), 503)
 
     status_payload = _safe_status()
+    _audit(command_name, True)
     return jsonify({"ok": True, "result": result, "status": status_payload["status"]})
 
 
@@ -103,3 +107,12 @@ def _error_response(message, status_code):
             "status": _safe_status()["status"],
         }
     ), status_code
+
+
+def _audit(command_name, ok, error=""):
+    current_app.extensions["audit_service"].record(
+        user=current_user.get_id(),
+        command=f"remote.{command_name}",
+        ok=ok,
+        error=error,
+    )

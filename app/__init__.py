@@ -4,6 +4,7 @@ from pathlib import Path
 
 from flask import Flask
 
+from app.blueprints.audit import audit_bp
 from app.blueprints.auth import auth_bp
 from app.blueprints.dashboard import dashboard_bp
 from app.blueprints.health import health_bp
@@ -13,6 +14,7 @@ from app.blueprints.settings import settings_bp
 from app.config import AppConfig
 from app.extensions import csrf, login_manager
 from app.models.user import UserStore
+from app.services.audit_service import AuditService
 from app.services.cast_service import CastService
 from app.services.media_service import MediaService
 from app.services.playback_service import PlaybackService
@@ -31,6 +33,7 @@ def create_app(config_object=AppConfig):
     _register_cli(app)
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(audit_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(health_bp)
     app.register_blueprint(media_bp)
@@ -84,6 +87,11 @@ def _register_services(app):
         settings["cast_timeout_seconds"] = app.config["CAST_TIMEOUT_SECONDS"]
     app.extensions["user_store"] = user_store
     app.extensions["settings_service"] = settings_service
+    app.extensions["audit_service"] = AuditService(
+        log_path=app.config["AUDIT_LOG_PATH"],
+        max_bytes=app.config["LOG_MAX_BYTES"],
+        backup_count=app.config["LOG_BACKUP_COUNT"],
+    )
     app.extensions["media_service"] = MediaService(
         settings_service=settings_service,
         base_directory=app.config["BASE_DIRECTORY"],

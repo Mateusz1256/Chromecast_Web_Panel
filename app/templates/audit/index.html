@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="panel">
+    <p class="eyebrow">Audyt</p>
+    <h1>Logi techniczne</h1>
+    <p class="muted">
+      Log zawiera operacje techniczne panelu i wyniki komend. Nie zapisuje
+      tytułów odtwarzanych treści ani pełnych URL-i mediów.
+    </p>
+  </section>
+
+  <section class="panel audit-panel">
+    <h2>Ostatnie błędy</h2>
+    {% for entry in errors %}
+      <pre class="audit-entry">{{ entry }}</pre>
+    {% else %}
+      <p class="muted">Brak błędów w ostatnich wpisach.</p>
+    {% endfor %}
+  </section>
+
+  <section class="panel audit-panel">
+    <h2>Ostatnie operacje</h2>
+    {% for entry in entries %}
+      <pre class="audit-entry">{{ entry }}</pre>
+    {% else %}
+      <p class="muted">Brak wpisów audytu.</p>
+    {% endfor %}
+  </section>
+{% endblock %}

@@ -8,6 +8,7 @@ from app.config import TestConfig
 def app(tmp_path):
     class RuntimeTestConfig(TestConfig):
         BASE_DIRECTORY = str(tmp_path)
+        AUDIT_LOG_PATH = str(tmp_path / "logs" / "audit.log")
         DATABASE_PATH = str(tmp_path / "instance" / "app.sqlite3")
         MEDIA_DIRECTORY = str(tmp_path / "media")
         LOG_DIRECTORY = str(tmp_path / "logs")

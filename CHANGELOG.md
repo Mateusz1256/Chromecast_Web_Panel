@@ -34,3 +34,5 @@ Format bazuje na Keep a Changelog, a projekt stosuje Semantic Versioning.
 - Pokaz slajdów, kolejka mediów i presety z jednym aktywnym zadaniem,
   możliwością zatrzymania oraz bez automatycznego wznawiania komend po
   restarcie aplikacji.
+- Rotowany audyt JSONL dla operacji technicznych, panel ostatnich błędów i
+  opcjonalny monitoring zmian aktywnej aplikacji, domyślnie wyłączony.

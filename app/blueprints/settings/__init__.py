@@ -83,6 +83,7 @@ def _form_to_settings(form):
         "default_audio_volume": form.default_audio_volume.data,
         "cast_timeout_seconds": form.cast_timeout_seconds.data,
         "status_refresh_seconds": form.status_refresh_seconds.data,
+        "monitor_app_changes": form.monitor_app_changes.data,
     }
 
 

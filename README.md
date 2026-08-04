@@ -150,7 +150,8 @@ Przykładowe ustawienia:
   "max_upload_mb": 100,
   "max_volume": 0.5,
   "default_audio_volume": 0.2,
-  "cast_timeout_seconds": 10
+  "cast_timeout_seconds": 10,
+  "monitor_app_changes": false
 }
 ```
 
@@ -266,6 +267,33 @@ Aktywne zadanie jest trzymane wyłącznie w pamięci procesu. Aplikacja dopuszcz
 tylko jedno aktywne zadanie naraz, pozwala je zatrzymać i nie wznawia komend
 samoczynnie po restarcie. Presety przetrwają restart, ale uruchomienie presetu
 zawsze wymaga jawnej akcji użytkownika.
+
+## Logi i audyt
+
+Aplikacja zapisuje dwa typy logów w katalogu `logs`:
+
+- `app.log` - techniczne logi aplikacji Flask;
+- `audit.log` - rotowany JSONL z operacjami panelu.
+
+Rozmiar i liczba kopii logów są kontrolowane przez `LOG_MAX_BYTES` oraz
+`LOG_BACKUP_COUNT`, więc pliki nie rosną bez końca. Panel `/audit` pokazuje
+ostatnie operacje i ostatnie błędy.
+
+Audyt zapisuje użytkownika, nazwę komendy, wynik, błąd i ograniczone szczegóły
+techniczne. Sekrety, hasła, tokeny, ciasteczka, nagłówki, pełne URL-e mediów,
+tytuły i `content_id` są redagowane albo nie są przekazywane do audytu. Audyt
+nie jest historią oglądania.
+
+Monitoring zmian aktywnej aplikacji Cast jest opcjonalny i domyślnie wyłączony:
+
+```json
+{
+  "monitor_app_changes": false
+}
+```
+
+Po jawnym włączeniu zapisywane są tylko techniczne informacje o zmianie
+aplikacji, takie jak `app_id` i nazwa aplikacji, bez tytułów odtwarzanych treści.
 
 ## Start po uruchomieniu DSM
 

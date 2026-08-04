@@ -13,6 +13,7 @@ DEFAULT_SETTINGS = {
     "default_audio_volume": 0.2,
     "cast_timeout_seconds": 10,
     "status_refresh_seconds": 5,
+    "monitor_app_changes": False,
 }
 
 
@@ -64,6 +65,9 @@ class SettingsService:
         _validate_float_range(settings, errors, "default_audio_volume", 0, 1)
         _validate_float_range(settings, errors, "cast_timeout_seconds", 1, 60)
         _validate_float_range(settings, errors, "status_refresh_seconds", 1, 120)
+        settings["monitor_app_changes"] = _coerce_bool(
+            settings["monitor_app_changes"]
+        )
         _validate_media_directory(settings, errors, self.base_directory)
 
         if (
@@ -160,3 +164,11 @@ def _validate_media_directory(
         return
 
     settings["media_directory"] = str(resolved)
+
+
+def _coerce_bool(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.lower() in {"1", "true", "yes", "on"}
+    return bool(value)
