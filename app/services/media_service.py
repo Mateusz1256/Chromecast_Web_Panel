@@ -13,6 +13,24 @@ ALLOWED_IMAGE_TYPES = {
     ".webp": "image/webp",
 }
 
+ALLOWED_AUDIO_TYPES = {
+    ".mp3": "audio/mpeg",
+    ".m4a": "audio/mp4",
+    ".aac": "audio/aac",
+    ".ogg": "audio/ogg",
+    ".wav": "audio/wav",
+}
+
+ALLOWED_VIDEO_TYPES = {
+    ".mp4": "video/mp4",
+    ".webm": "video/webm",
+}
+
+ALLOWED_MEDIA_TYPES = {}
+ALLOWED_MEDIA_TYPES.update(ALLOWED_IMAGE_TYPES)
+ALLOWED_MEDIA_TYPES.update(ALLOWED_AUDIO_TYPES)
+ALLOWED_MEDIA_TYPES.update(ALLOWED_VIDEO_TYPES)
+
 
 class MediaValidationError(ValueError):
     pass
@@ -27,6 +45,7 @@ class MediaFile:
     filename: str
     size_bytes: int
     content_type: str
+    media_type: str
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -44,43 +63,64 @@ class MediaService:
         self.fallback_media_directory = fallback_media_directory
 
     def list_images(self) -> List[Dict[str, Any]]:
+        return self.list_media("image")
+
+    def list_media(self, media_type: str = "all") -> List[Dict[str, Any]]:
         media_directory = self.media_directory
         media_directory.mkdir(parents=True, exist_ok=True)
-        images = []
+        media_files = []
         paths = sorted(media_directory.iterdir(), key=lambda item: item.name.lower())
         for path in paths:
-            if path.is_file() and path.suffix.lower() in ALLOWED_IMAGE_TYPES:
-                images.append(
-                    MediaFile(
-                        filename=path.name,
-                        size_bytes=path.stat().st_size,
-                        content_type=self.content_type_for(path.name),
-                    ).to_dict()
-                )
-        return images
+            if not path.is_file():
+                continue
+            current_type = self.media_type_for(path.name)
+            if current_type == "unknown":
+                continue
+            if media_type != "all" and current_type != media_type:
+                continue
+            media_files.append(
+                MediaFile(
+                    filename=path.name,
+                    size_bytes=path.stat().st_size,
+                    content_type=self.content_type_for(path.name),
+                    media_type=current_type,
+                ).to_dict()
+            )
+        return media_files
 
     def save_image(self, uploaded_file: FileStorage) -> Dict[str, Any]:
+        return self.save_media(uploaded_file, expected_media_type="image")
+
+    def save_media(
+        self,
+        uploaded_file: FileStorage,
+        expected_media_type: str = "all",
+    ) -> Dict[str, Any]:
         if not uploaded_file or not uploaded_file.filename:
-            raise MediaValidationError("Choose an image file")
+            raise MediaValidationError("Choose a media file")
 
         filename = secure_filename(uploaded_file.filename)
         if not filename:
-            raise MediaValidationError("Image filename is invalid")
+            raise MediaValidationError("Media filename is invalid")
 
         suffix = Path(filename).suffix.lower()
-        if suffix not in ALLOWED_IMAGE_TYPES:
-            raise MediaValidationError("Unsupported image extension")
+        if suffix not in ALLOWED_MEDIA_TYPES:
+            raise MediaValidationError("Unsupported media extension")
 
-        expected_content_type = ALLOWED_IMAGE_TYPES[suffix]
-        if uploaded_file.mimetype != expected_content_type:
-            raise MediaValidationError("Unsupported image MIME type")
-        if self._detect_image_type(uploaded_file) != expected_content_type:
-            raise MediaValidationError("Image content does not match its type")
+        media_type = self.media_type_for(filename)
+        if expected_media_type != "all" and media_type != expected_media_type:
+            raise MediaValidationError("Unsupported media type for this upload")
+
+        expected_content_type = ALLOWED_MEDIA_TYPES[suffix]
+        accepted_mime_types = self.accepted_mime_types_for(suffix)
+        if uploaded_file.mimetype not in accepted_mime_types:
+            raise MediaValidationError("Unsupported media MIME type")
+        self._validate_signature(uploaded_file, media_type, expected_content_type)
 
         size_bytes = self._measure_upload(uploaded_file)
         max_bytes = int(self.settings["max_upload_mb"]) * 1024 * 1024
         if size_bytes > max_bytes:
-            raise MediaValidationError("Image exceeds configured upload limit")
+            raise MediaValidationError("Media exceeds configured upload limit")
 
         media_directory = self.media_directory
         media_directory.mkdir(parents=True, exist_ok=True)
@@ -90,6 +130,7 @@ class MediaService:
             filename=target.name,
             size_bytes=target.stat().st_size,
             content_type=expected_content_type,
+            media_type=media_type,
         ).to_dict()
 
     def delete(self, filename: str) -> None:
@@ -108,7 +149,7 @@ class MediaService:
             path.relative_to(self.media_directory)
         except ValueError as exc:
             raise MediaValidationError("Path traversal is not allowed") from exc
-        if path.suffix.lower() not in ALLOWED_IMAGE_TYPES:
+        if path.suffix.lower() not in ALLOWED_MEDIA_TYPES:
             raise MediaValidationError("Unsupported media type")
         return path
 
@@ -123,10 +164,30 @@ class MediaService:
 
     def content_type_for(self, filename: str) -> str:
         suffix = Path(filename).suffix.lower()
-        if suffix in ALLOWED_IMAGE_TYPES:
-            return ALLOWED_IMAGE_TYPES[suffix]
+        if suffix in ALLOWED_MEDIA_TYPES:
+            return ALLOWED_MEDIA_TYPES[suffix]
         guessed, _ = mimetypes.guess_type(filename)
         return guessed or "application/octet-stream"
+
+    def media_type_for(self, filename: str) -> str:
+        suffix = Path(filename).suffix.lower()
+        if suffix in ALLOWED_IMAGE_TYPES:
+            return "image"
+        if suffix in ALLOWED_AUDIO_TYPES:
+            return "audio"
+        if suffix in ALLOWED_VIDEO_TYPES:
+            return "video"
+        return "unknown"
+
+    def accepted_mime_types_for(self, suffix: str) -> List[str]:
+        content_type = ALLOWED_MEDIA_TYPES[suffix]
+        aliases = {
+            ".m4a": ["audio/mp4", "audio/x-m4a"],
+            ".aac": ["audio/aac", "audio/aacp", "audio/mp4"],
+            ".ogg": ["audio/ogg", "application/ogg"],
+            ".wav": ["audio/wav", "audio/x-wav"],
+        }
+        return aliases.get(suffix, [content_type])
 
     @property
     def media_directory(self) -> Path:
@@ -174,6 +235,17 @@ class MediaService:
         if header.startswith(b"RIFF") and header[8:12] == b"WEBP":
             return "image/webp"
         return ""
+
+    def _validate_signature(
+        self,
+        uploaded_file: FileStorage,
+        media_type: str,
+        expected_content_type: str,
+    ) -> None:
+        if media_type != "image":
+            return
+        if self._detect_image_type(uploaded_file) != expected_content_type:
+            raise MediaValidationError("Image content does not match its type")
 
     def _unique_path(self, target: Path) -> Path:
         if not target.exists():

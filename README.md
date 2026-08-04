@@ -207,15 +207,32 @@ ogranicza zbyt szybkie powtarzanie tej samej komendy.
 ## Biblioteka obrazów
 
 Widok `/media` pozwala zalogowanemu administratorowi przesłać, podejrzeć,
-usunąć i wyświetlić obraz na urządzeniu Cast. Obsługiwane typy:
+usunąć i odtworzyć media na urządzeniu Cast. Obsługiwane typy obrazów:
 
 - JPG/JPEG;
 - PNG;
 - WebP.
 
-Upload sprawdza rozszerzenie, MIME, podstawową sygnaturę pliku, limit
+Obsługiwane typy audio:
+
+- MP3;
+- AAC/M4A;
+- OGG;
+- WAV.
+
+Obsługiwane typy wideo:
+
+- MP4;
+- WebM.
+
+Upload sprawdza rozszerzenie, MIME, podstawową sygnaturę dla obrazów, limit
 `max_upload_mb` i sanityzuje nazwę pliku. Pliki są zapisywane wyłącznie w
 skonfigurowanym katalogu mediów.
+
+Aplikacja nie transkoduje plików i nie obiecuje obsługi dowolnego kodeka.
+Dla wideo zalecany jest MP4 H.264 + AAC, bo jest najlepiej wspierany przez
+Google Cast / Android TV. WebM i inne kontenery mogą zależeć od konkretnego
+odbiornika.
 
 Publiczny endpoint plików:
 
@@ -233,9 +250,11 @@ URL wysyłany do Cast jest budowany z lokalnego adresu NAS-a i portu aplikacji:
 http://<nas_lan_ip>:<app_port>/media/files/<filename>
 ```
 
-Przycisk „Wyświetl” uruchamia Default Media Receiver przez `CastService`.
-Widok pokazuje potwierdzenie przed przerwaniem aktywnej aplikacji oraz udostępnia
-przycisk `Stop`.
+Przycisk „Wyświetl” albo „Odtwórz” uruchamia Default Media Receiver przez
+`CastService`. Przy audio aplikacja przed startem ustawia bezpieczną domyślną
+głośność `default_audio_volume`, nie przekraczając `max_volume`, i zapamiętuje
+poprzedni poziom do przywrócenia po `Stop`. Widok pokazuje potwierdzenie przed
+przerwaniem aktywnej aplikacji oraz udostępnia przycisk `Stop`.
 
 ## Start po uruchomieniu DSM
 

@@ -229,6 +229,17 @@ input:disabled {
   background: #111215;
 }
 
+.media-placeholder {
+  display: grid;
+  width: 160px;
+  aspect-ratio: 4 / 3;
+  place-items: center;
+  border-radius: 6px;
+  background: #111215;
+  color: var(--muted);
+  font-weight: 800;
+}
+
 .media-info {
   min-width: 0;
 }
@@ -275,7 +286,8 @@ input:disabled {
     grid-template-columns: 1fr;
   }
 
-  .media-item img {
+  .media-item img,
+  .media-placeholder {
     width: 100%;
   }
 }

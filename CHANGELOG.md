@@ -28,3 +28,6 @@ Format bazuje na Keep a Changelog, a projekt stosuje Semantic Versioning.
 - Podstawowy pilot na dashboardzie: głośność z backendowym limitem, mute,
   unmute, play, pause, stop, seek, odświeżanie statusu po komendzie i rate
   limit dla komend sterujących.
+- Obsługa audio i wideo w bibliotece mediów: upload MP3/AAC/M4A/OGG/WAV oraz
+  MP4/WebM, odtwarzanie przez Default Media Receiver, bezpieczna domyślna
+  głośność audio i przywracanie poprzedniej głośności po `Stop`.

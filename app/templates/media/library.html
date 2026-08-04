@@ -5,7 +5,7 @@
     <div class="section-head">
       <div>
         <p class="eyebrow">Biblioteka</p>
-        <h1>Obrazy</h1>
+        <h1>Media</h1>
       </div>
       <form method="post" action="{{ url_for('media.stop') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -16,36 +16,52 @@
     <form method="post" enctype="multipart/form-data" class="upload-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label>
-        Plik obrazu
-        <input type="file" name="image" accept="image/jpeg,image/png,image/webp" required>
+        Plik multimedialny
+        <input
+          type="file"
+          name="media"
+          accept="image/jpeg,image/png,image/webp,audio/mpeg,audio/mp4,audio/aac,audio/ogg,audio/wav,video/mp4,video/webm"
+          required
+        >
       </label>
       <button type="submit">Prześlij</button>
     </form>
+    <p class="muted">
+      Audio i wideo nie są transkodowane. Zalecany format wideo to MP4 H.264 + AAC.
+    </p>
   </section>
 
   <section class="media-list">
-    {% for image in images %}
+    {% for media in media_files %}
       <article class="media-item">
-        <img
-          src="{{ url_for('media.file', filename=image.filename) }}"
-          alt="Podgląd {{ image.filename }}"
-          loading="lazy"
-        >
+        {% if media.media_type == "image" %}
+          <img
+            src="{{ url_for('media.file', filename=media.filename) }}"
+            alt="Podgląd {{ media.filename }}"
+            loading="lazy"
+          >
+        {% else %}
+          <div class="media-placeholder">
+            {{ media.media_type|upper }}
+          </div>
+        {% endif %}
         <div class="media-info">
-          <h2>{{ image.filename }}</h2>
-          <p class="muted">{{ image.content_type }} · {{ image.size_bytes }} B</p>
+          <h2>{{ media.filename }}</h2>
+          <p class="muted">
+            {{ media.media_type }} · {{ media.content_type }} · {{ media.size_bytes }} B
+          </p>
         </div>
         <div class="media-actions">
-          <form method="post" action="{{ url_for('media.show', filename=image.filename) }}">
+          <form method="post" action="{{ url_for('media.play', filename=media.filename) }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button
               type="submit"
-              onclick="return confirm('Wyświetlenie obrazu przełączy aktywną aplikację na odbiornik Cast. Kontynuować?')"
+              onclick="return confirm('Odtworzenie medium przełączy aktywną aplikację na odbiornik Cast. Kontynuować?')"
             >
-              Wyświetl
+              {% if media.media_type == "image" %}Wyświetl{% else %}Odtwórz{% endif %}
             </button>
           </form>
-          <form method="post" action="{{ url_for('media.delete', filename=image.filename) }}">
+          <form method="post" action="{{ url_for('media.delete', filename=media.filename) }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="danger">Usuń</button>
           </form>
