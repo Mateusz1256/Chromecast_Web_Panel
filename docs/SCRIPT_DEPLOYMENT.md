@@ -104,6 +104,12 @@ The backup archive is written to `backups/` and includes existing configuration,
 SQLite database and presets. Media files are not included because they can be
 large; back them up separately if needed.
 
+Restore to an application directory:
+
+```sh
+APP_DIR=/opt/cast-panel scripts/restore.sh backups/<archive>.tar.gz
+```
+
 ## Update
 
 ```sh

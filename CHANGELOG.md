@@ -29,6 +29,9 @@ Versioning.
 - Rotated JSONL audit logs, recent-error panel and optional active app change
   monitoring disabled by default.
 - Script-based deployment helpers for start, stop and backup.
+- Version `1.0.0`, strong secret key validation, secure session defaults,
+  versioned settings migration, secret-free diagnostics export, restore script,
+  user guide, developer guide and release checklist.
 
 ### Changed
 

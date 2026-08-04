@@ -7,6 +7,7 @@ from flask import Flask
 from app.blueprints.audit import audit_bp
 from app.blueprints.auth import auth_bp
 from app.blueprints.dashboard import dashboard_bp
+from app.blueprints.diagnostics import diagnostics_bp
 from app.blueprints.health import health_bp
 from app.blueprints.media import media_bp
 from app.blueprints.remote import remote_bp
@@ -26,6 +27,7 @@ def create_app(config_object=AppConfig):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config_object)
 
+    _validate_secret_key(app)
     _ensure_runtime_directories(app)
     _configure_logging(app)
     _register_extensions(app)
@@ -35,6 +37,7 @@ def create_app(config_object=AppConfig):
     app.register_blueprint(auth_bp)
     app.register_blueprint(audit_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(diagnostics_bp)
     app.register_blueprint(health_bp)
     app.register_blueprint(media_bp)
     app.register_blueprint(remote_bp)
@@ -48,6 +51,15 @@ def _ensure_runtime_directories(app):
     Path(app.config["SETTINGS_PATH"]).parent.mkdir(parents=True, exist_ok=True)
     Path(app.config["MEDIA_DIRECTORY"]).mkdir(parents=True, exist_ok=True)
     Path(app.config["LOG_DIRECTORY"]).mkdir(parents=True, exist_ok=True)
+
+
+def _validate_secret_key(app):
+    secret_key = app.config.get("SECRET_KEY", "")
+    weak_keys = {"", "dev-only-change-me", "replace-with-a-long-random-value"}
+    if app.config.get("TESTING"):
+        return
+    if app.config.get("REQUIRE_STRONG_SECRET") and secret_key in weak_keys:
+        raise RuntimeError("Set a strong SECRET_KEY before starting the app")
 
 
 def _configure_logging(app):

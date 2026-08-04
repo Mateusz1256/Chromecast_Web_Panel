@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any, Dict, Tuple
 
 DEFAULT_SETTINGS = {
+    "settings_version": 1,
     "cast_ip": "192.168.0.39",
     "nas_lan_ip": "192.168.0.10",
     "app_port": 5000,
@@ -34,7 +35,7 @@ class SettingsService:
             with self.config_path.open("r", encoding="utf-8") as config_file:
                 loaded = json.load(config_file)
             if isinstance(loaded, dict):
-                settings.update(_public_settings(loaded))
+                settings.update(_migrate_settings(_public_settings(loaded)))
         return settings
 
     def save(self, values: Dict[str, Any]) -> Dict[str, Any]:
@@ -55,6 +56,7 @@ class SettingsService:
     def validate(self, values: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, str]]:
         settings = dict(DEFAULT_SETTINGS)
         settings.update(_public_settings(values))
+        settings["settings_version"] = DEFAULT_SETTINGS["settings_version"]
         errors = {}
 
         _validate_ip(settings, errors, "cast_ip")
@@ -88,6 +90,12 @@ def _public_settings(values: Dict[str, Any]) -> Dict[str, Any]:
         for key in DEFAULT_SETTINGS
         if key in values
     }
+
+
+def _migrate_settings(values: Dict[str, Any]) -> Dict[str, Any]:
+    migrated = dict(values)
+    migrated["settings_version"] = DEFAULT_SETTINGS["settings_version"]
+    return migrated
 
 
 def _validate_ip(settings: Dict[str, Any], errors: Dict[str, str], key: str) -> None:

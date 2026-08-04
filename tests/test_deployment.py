@@ -3,10 +3,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def test_synology_scripts_exist():
+def test_deployment_scripts_exist():
     assert (ROOT / "scripts" / "start.sh").exists()
     assert (ROOT / "scripts" / "stop.sh").exists()
     assert (ROOT / "scripts" / "backup.sh").exists()
+    assert (ROOT / "scripts" / "restore.sh").exists()
 
 
 def test_start_script_uses_waitress_and_pid_file():
@@ -36,6 +37,15 @@ def test_backup_script_includes_config_and_database():
     assert "tar -czf" in script
 
 
+def test_restore_script_validates_archive_entries():
+    script = (ROOT / "scripts" / "restore.sh").read_text(encoding="utf-8")
+
+    assert "tar -tzf" in script
+    assert "Unsafe backup entry" in script
+    assert "instance/config.json" in script
+    assert "instance/app.sqlite3" in script
+
+
 def test_deployment_docs_describe_script_based_run():
     docs = (ROOT / "docs" / "SCRIPT_DEPLOYMENT.md").read_text(encoding="utf-8")
 
@@ -44,3 +54,4 @@ def test_deployment_docs_describe_script_based_run():
     assert "scripts/start.sh" in docs
     assert "scripts/stop.sh" in docs
     assert "scripts/backup.sh" in docs
+    assert "scripts/restore.sh" in docs

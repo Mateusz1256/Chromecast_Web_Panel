@@ -7,6 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 class AppConfig:
     BASE_DIRECTORY = str(BASE_DIR)
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-change-me")
+    REQUIRE_STRONG_SECRET = os.environ.get("REQUIRE_STRONG_SECRET", "1") == "1"
     APP_HOST = os.environ.get("APP_HOST", "0.0.0.0")
     APP_PORT = int(os.environ.get("APP_PORT", "5000"))
     CAST_IP = os.environ.get("CAST_IP", "")
@@ -44,11 +45,15 @@ class AppConfig:
     LOG_BACKUP_COUNT = int(os.environ.get("LOG_BACKUP_COUNT", "3"))
 
     JSON_SORT_KEYS = False
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = os.environ.get("SESSION_COOKIE_SAMESITE", "Lax")
+    SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "0") == "1"
 
 
 class TestConfig(AppConfig):
     TESTING = True
     CAST_IP = "192.168.0.39"
     SECRET_KEY = "test-secret-key"
+    REQUIRE_STRONG_SECRET = False
     COMMAND_RATE_LIMIT_SECONDS = 0
     WTF_CSRF_ENABLED = False

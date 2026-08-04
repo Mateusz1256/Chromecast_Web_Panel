@@ -238,6 +238,7 @@ For a simple Unix-like host, the repository includes:
 scripts/start.sh
 scripts/stop.sh
 scripts/backup.sh
+scripts/restore.sh
 ```
 
 The scripts set the working directory, load `.env`, activate `.venv`, start
@@ -245,6 +246,13 @@ Waitress, write startup logs and use a PID file to avoid a second instance.
 
 Detailed script-based deployment notes are in
 `docs/SCRIPT_DEPLOYMENT.md`.
+
+Release validation steps are tracked in `docs/RELEASE_CHECKLIST.md`.
+
+Additional documentation:
+
+- `docs/USER_GUIDE.md`
+- `docs/DEVELOPMENT.md`
 
 ## Security Notes
 
@@ -260,4 +268,3 @@ Detailed script-based deployment notes are in
 ## Credits
 
 Third-party packages are listed in `THIRD_PARTY_NOTICES.md`.
-
