@@ -39,27 +39,27 @@ Lekki panel webowy Flask do sterowania urządzeniem Google Cast / Android TV z S
 Przykład:
 
 ```text
-/volume1/skrypty/cast-panel
+/volume1/path-to-app
 ```
 
 Zalecane katalogi:
 
 ```text
-/volume1/skrypty/cast-panel/media
-/volume1/skrypty/cast-panel/logs
-/volume1/skrypty/cast-panel/instance
-/volume1/skrypty/tmp-pip
+/volume1/path-to-app/media
+/volume1/path-to-app/logs
+/volume1/path-to-app/instance
+/volume1/tmp-pip
 ```
 
 ## Instalacja deweloperska
 
 ```bash
-cd /volume1/skrypty/cast-panel
+cd /volume1/path-to-app
 
 python3 -m venv .venv
 source .venv/bin/activate
 
-export TMPDIR=/volume1/skrypty/tmp-pip
+export TMPDIR=/volume1/tmp-pip
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
@@ -143,10 +143,10 @@ Przykładowe ustawienia:
 
 ```json
 {
-  "cast_ip": "192.168.0.39",
-  "nas_lan_ip": "192.168.0.10",
+  "cast_ip": "192.168.1.50",
+  "nas_lan_ip": "192.168.1.10",
   "app_port": 5000,
-  "media_directory": "/volume1/skrypty/cast-panel/media",
+  "media_directory": "/volume1/path-to-app/media",
   "max_upload_mb": 100,
   "max_volume": 0.5,
   "default_audio_volume": 0.2,
@@ -297,13 +297,21 @@ aplikacji, takie jak `app_id` i nazwa aplikacji, bez tytułów odtwarzanych tre�
 
 ## Start po uruchomieniu DSM
 
-Docelowo aplikacja powinna mieć skrypt:
+Wdrożenie na Synology jest opisane w `docs/SYNOLOGY_DEPLOYMENT.md`.
+Aplikacja ma skrypt startowy:
 
 ```text
 scripts/start.sh
 ```
 
-i być uruchamiana przez Harmonogram zadań DSM jako zadanie przy starcie systemu.
+oraz skrypt zatrzymania:
+
+```text
+scripts/stop.sh
+```
+
+Może być uruchamiana przez Harmonogram zadań DSM jako zadanie przy starcie
+systemu.
 
 Skrypt ma:
 
@@ -314,6 +322,12 @@ Skrypt ma:
 - przekierować logi do pliku;
 - zapobiegać uruchomieniu drugiej instancji.
 
+Backup konfiguracji i bazy:
+
+```text
+scripts/backup.sh
+```
+
 ## Bezpieczeństwo
 
 - Nie wystawiaj portu aplikacji na publiczny internet.
@@ -323,10 +337,6 @@ Skrypt ma:
 - Ogranicz głośność.
 - Nie pozwalaj użytkownikowi sterować dowolnym adresem IP.
 - Włącz CSRF i limit uploadu.
-
-## Taski
-
-Kolejność realizacji znajduje się w katalogu `tasks/`.
 
 ## Licencja
 

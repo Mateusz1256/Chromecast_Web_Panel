@@ -36,3 +36,5 @@ Format bazuje na Keep a Changelog, a projekt stosuje Semantic Versioning.
   restarcie aplikacji.
 - Rotowany audyt JSONL dla operacji technicznych, panel ostatnich błędów i
   opcjonalny monitoring zmian aktywnej aplikacji, domyślnie wyłączony.
+- Skrypty wdrożeniowe Synology dla startu, stopu i backupu oraz instrukcja DSM
+  Task Scheduler bez Dockera, Apache i Nginx.

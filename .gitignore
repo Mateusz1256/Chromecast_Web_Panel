@@ -17,3 +17,12 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
+# Local agent/task planning notes
+AGENTS.md
+PROMPT_DLA_AGENTA.md
+TASK_INDEX.md
+tasks/
+
+# Local environment diagnostics
+diagnostics/
