@@ -5,6 +5,7 @@ from pathlib import Path
 from flask import Flask
 
 from app.blueprints.auth import auth_bp
+from app.blueprints.dashboard import dashboard_bp
 from app.blueprints.health import health_bp
 from app.blueprints.settings import settings_bp
 from app.config import AppConfig
@@ -25,6 +26,7 @@ def create_app(config_object=AppConfig):
     _register_cli(app)
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(dashboard_bp)
     app.register_blueprint(health_bp)
     app.register_blueprint(settings_bp)
     return app

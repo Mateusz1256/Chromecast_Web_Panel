@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section
+    class="dashboard"
+    data-status-url="{{ url_for('dashboard.status') }}"
+    data-refresh-ms="{{ (status_refresh_seconds * 1000)|int }}"
+  >
+    <div class="status-card">
+      <div class="status-head">
+        <div>
+          <p class="eyebrow">Urządzenie Cast</p>
+          <h1 id="device-name">Status</h1>
+        </div>
+        <span id="online-badge" class="badge unknown">Sprawdzanie</span>
+      </div>
+      <p id="status-message" class="muted">Ładowanie statusu urządzenia.</p>
+      <dl class="status-grid">
+        <div>
+          <dt>Model</dt>
+          <dd id="model-name">-</dd>
+        </div>
+        <div>
+          <dt>Aplikacja</dt>
+          <dd id="app-name">-</dd>
+        </div>
+        <div>
+          <dt>App ID</dt>
+          <dd id="app-id">-</dd>
+        </div>
+        <div>
+          <dt>Standby</dt>
+          <dd id="standby">-</dd>
+        </div>
+        <div>
+          <dt>Aktywne wejście</dt>
+          <dd id="active-input">-</dd>
+        </div>
+        <div>
+          <dt>Głośność</dt>
+          <dd id="volume">-</dd>
+        </div>
+        <div>
+          <dt>Wyciszenie</dt>
+          <dd id="muted">-</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="media-panel">
+      <h2>Media</h2>
+      <p id="media-empty" class="muted">Brak standardowego statusu mediów.</p>
+      <dl id="media-status" class="status-grid compact"></dl>
+    </div>
+  </section>
+  <script src="{{ url_for('static', filename='dashboard.js') }}" defer></script>
+{% endblock %}

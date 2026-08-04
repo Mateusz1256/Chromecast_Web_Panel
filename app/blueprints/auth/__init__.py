@@ -9,7 +9,7 @@ auth_bp = Blueprint("auth", __name__)
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("settings.settings"))
+        return redirect(url_for("dashboard.dashboard"))
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -17,7 +17,7 @@ def login():
         user = user_store.authenticate(form.username.data, form.password.data)
         if user is not None:
             login_user(user)
-            return redirect(url_for("settings.settings"))
+            return redirect(url_for("dashboard.dashboard"))
         flash("Invalid username or password", "error")
 
     return render_template("auth/login.html", form=form)

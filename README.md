@@ -174,6 +174,23 @@ Walidowane są adresy IP, port, katalog mediów, limity uploadu, poziomy
 głośności i timeout Cast. Katalog mediów musi znajdować się pod katalogiem
 projektu, co ogranicza ryzyko przypadkowego udostępnienia obcych ścieżek.
 
+## Dashboard statusu
+
+Po zalogowaniu pierwszym ekranem jest dashboard pod `/`. Widok pokazuje stan
+online/offline, nazwę urządzenia, model, aktywną aplikację, `app_id`, standby,
+aktywne wejście, głośność, mute i standardowy status mediów, jeśli urządzenie
+go udostępnia.
+
+Status jest dostępny również jako JSON:
+
+```text
+GET /status
+```
+
+Endpoint jest chroniony logowaniem i mapuje błędy Cast na odpowiedź offline
+bez tracebacka. Frontend odświeża status prostym pollingiem AJAX zgodnie z
+`status_refresh_seconds` z ustawień i utrzymuje tylko jedno aktywne zapytanie.
+
 ## Start po uruchomieniu DSM
 
 Docelowo aplikacja powinna mieć skrypt:

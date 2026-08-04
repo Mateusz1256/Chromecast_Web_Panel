@@ -20,3 +20,5 @@ Format bazuje na Keep a Changelog, a projekt stosuje Semantic Versioning.
   hashowanie haseł, CSRF oraz trwałe ustawienia w `instance/config.json`.
 - Walidacja ustawień IP, portów, ścieżek, limitów uploadu, głośności i
   timeoutów oraz import/eksport konfiguracji bez sekretów.
+- Chroniony dashboard statusu Cast z widokiem online/offline, danymi
+  urządzenia, aplikacji, głośności i mediów oraz pollingiem AJAX.

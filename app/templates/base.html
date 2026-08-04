@@ -8,12 +8,16 @@
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="{{ url_for('settings.settings') }}">Cast Control Panel</a>
+      <a class="brand" href="{{ url_for('dashboard.dashboard') }}">Cast Control Panel</a>
       {% if current_user.is_authenticated %}
-        <form method="post" action="{{ url_for('auth.logout') }}">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button type="submit">Wyloguj</button>
-        </form>
+        <nav class="nav">
+          <a href="{{ url_for('dashboard.dashboard') }}">Status</a>
+          <a href="{{ url_for('settings.settings') }}">Ustawienia</a>
+          <form method="post" action="{{ url_for('auth.logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">Wyloguj</button>
+          </form>
+        </nav>
       {% endif %}
     </header>
     <main class="page">
