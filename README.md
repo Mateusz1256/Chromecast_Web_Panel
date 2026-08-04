@@ -137,6 +137,21 @@ Przykładowe ustawienia:
 }
 ```
 
+Na etapie rdzenia Cast dostępna jest warstwa `CastService`, która przyjmuje
+`CAST_IP` i `CAST_TIMEOUT_SECONDS` z konfiguracji aplikacji. Serwis łączy się
+przez `known_hosts=[CAST_IP]`, nie polega wyłącznie na mDNS i zwraca własne
+słowniki statusu zamiast obiektów `pychromecast`.
+
+Obsługiwane błędy domenowe:
+
+- `CastDeviceUnavailable`;
+- `CastConnectionTimeout`;
+- `CastUnsupportedCommand`;
+- `CastMediaLaunchFailed`.
+
+Testy tej warstwy używają mockowanego adaptera i nie wymagają fizycznego
+urządzenia Cast.
+
 ## Start po uruchomieniu DSM
 
 Docelowo aplikacja powinna mieć skrypt:

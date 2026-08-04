@@ -14,3 +14,5 @@ Format bazuje na Keep a Changelog, a projekt stosuje Semantic Versioning.
 - Minimalny szkielet aplikacji Flask z endpointem `/health`.
 - Konfiguracja pytest, Ruff, logowania rotowanego oraz plików zależności.
 - Diagnostyka środowiska i `THIRD_PARTY_NOTICES.md`.
+- `CastService` z mockowalnym adapterem, timeoutem, reconnectem, blokadą
+  komend, ustandaryzowanym statusem i wyjątkami domenowymi.

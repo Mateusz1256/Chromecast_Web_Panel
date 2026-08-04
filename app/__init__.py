@@ -6,6 +6,7 @@ from flask import Flask
 
 from app.blueprints.health import health_bp
 from app.config import AppConfig
+from app.services.cast_service import CastService
 
 
 def create_app(config_object=AppConfig):
@@ -14,6 +15,7 @@ def create_app(config_object=AppConfig):
 
     _ensure_runtime_directories(app)
     _configure_logging(app)
+    _register_services(app)
 
     app.register_blueprint(health_bp)
     return app
@@ -46,3 +48,10 @@ def _configure_logging(app):
     )
     if not has_file_handler:
         app.logger.addHandler(handler)
+
+
+def _register_services(app):
+    app.extensions["cast_service"] = CastService(
+        cast_ip=app.config["CAST_IP"],
+        timeout_seconds=app.config["CAST_TIMEOUT_SECONDS"],
+    )

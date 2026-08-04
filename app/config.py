@@ -8,6 +8,8 @@ class AppConfig:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-change-me")
     APP_HOST = os.environ.get("APP_HOST", "0.0.0.0")
     APP_PORT = int(os.environ.get("APP_PORT", "5000"))
+    CAST_IP = os.environ.get("CAST_IP", "")
+    CAST_TIMEOUT_SECONDS = float(os.environ.get("CAST_TIMEOUT_SECONDS", "10"))
 
     MEDIA_DIRECTORY = os.environ.get(
         "MEDIA_DIRECTORY",
@@ -26,5 +28,5 @@ class AppConfig:
 
 class TestConfig(AppConfig):
     TESTING = True
+    CAST_IP = "192.168.0.39"
     SECRET_KEY = "test-secret-key"
-
