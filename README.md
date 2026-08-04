@@ -78,6 +78,13 @@ python -m ruff check .
 python run.py
 ```
 
+Pierwsze konto administratora utwórz ręcznie przez CLI. Aplikacja nie ma
+domyślnego loginu ani hasła:
+
+```bash
+flask --app wsgi:app init-admin
+```
+
 Endpoint diagnostyczny:
 
 ```text
@@ -122,13 +129,23 @@ instance/config.json
 
 Sekrety i hash hasła nie mogą trafiać do Git.
 
+Lokalne konto administratora jest przechowywane w SQLite:
+
+```text
+instance/app.sqlite3
+```
+
+Hasła są hashowane przez Werkzeug. Formularze logowania i ustawień są
+chronione przez CSRF. Import i eksport ustawień obejmuje tylko publiczne pola
+konfiguracji, bez sekretów aplikacji i bez hashy haseł.
+
 Przykładowe ustawienia:
 
 ```json
 {
   "cast_ip": "192.168.0.39",
   "nas_lan_ip": "192.168.0.10",
-  "media_port": 5000,
+  "app_port": 5000,
   "media_directory": "/volume1/skrypty/cast-panel/media",
   "max_upload_mb": 100,
   "max_volume": 0.5,
@@ -151,6 +168,11 @@ Obsługiwane błędy domenowe:
 
 Testy tej warstwy używają mockowanego adaptera i nie wymagają fizycznego
 urządzenia Cast.
+
+Panel ustawień zapisuje konfigurację trwale w `instance/config.json`.
+Walidowane są adresy IP, port, katalog mediów, limity uploadu, poziomy
+głośności i timeout Cast. Katalog mediów musi znajdować się pod katalogiem
+projektu, co ogranicza ryzyko przypadkowego udostępnienia obcych ścieżek.
 
 ## Start po uruchomieniu DSM
 

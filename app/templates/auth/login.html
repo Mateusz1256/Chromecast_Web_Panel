@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="panel narrow">
+    <h1>Logowanie</h1>
+    <form method="post">
+      {{ form.hidden_tag() }}
+      <label>
+        {{ form.username.label }}
+        {{ form.username(autocomplete="username") }}
+      </label>
+      <label>
+        {{ form.password.label }}
+        {{ form.password(autocomplete="current-password") }}
+      </label>
+      {{ form.submit() }}
+    </form>
+  </section>
+{% endblock %}
