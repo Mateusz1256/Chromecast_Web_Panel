@@ -1,0 +1,30 @@
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+class AppConfig:
+    SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-change-me")
+    APP_HOST = os.environ.get("APP_HOST", "0.0.0.0")
+    APP_PORT = int(os.environ.get("APP_PORT", "5000"))
+
+    MEDIA_DIRECTORY = os.environ.get(
+        "MEDIA_DIRECTORY",
+        str(BASE_DIR / "media"),
+    )
+    LOG_DIRECTORY = os.environ.get(
+        "LOG_DIRECTORY",
+        str(BASE_DIR / "logs"),
+    )
+    LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
+    LOG_MAX_BYTES = int(os.environ.get("LOG_MAX_BYTES", "1048576"))
+    LOG_BACKUP_COUNT = int(os.environ.get("LOG_BACKUP_COUNT", "3"))
+
+    JSON_SORT_KEYS = False
+
+
+class TestConfig(AppConfig):
+    TESTING = True
+    SECRET_KEY = "test-secret-key"
+

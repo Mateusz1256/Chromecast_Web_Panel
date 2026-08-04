@@ -1,0 +1,8 @@
+{
+  "platform": "Windows-10-10.0.19045-SP0",
+  "pychromecast_error": "No module named 'pychromecast'",
+  "pychromecast_installed": false,
+  "python_executable": "C:\\Python312\\python.exe",
+  "python_version": "3.12.4",
+  "venv_module_available": true
+}
