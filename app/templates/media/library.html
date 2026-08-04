@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="panel">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Biblioteka</p>
+        <h1>Obrazy</h1>
+      </div>
+      <form method="post" action="{{ url_for('media.stop') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">Stop</button>
+      </form>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="upload-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>
+        Plik obrazu
+        <input type="file" name="image" accept="image/jpeg,image/png,image/webp" required>
+      </label>
+      <button type="submit">Prześlij</button>
+    </form>
+  </section>
+
+  <section class="media-list">
+    {% for image in images %}
+      <article class="media-item">
+        <img
+          src="{{ url_for('media.file', filename=image.filename) }}"
+          alt="Podgląd {{ image.filename }}"
+          loading="lazy"
+        >
+        <div class="media-info">
+          <h2>{{ image.filename }}</h2>
+          <p class="muted">{{ image.content_type }} · {{ image.size_bytes }} B</p>
+        </div>
+        <div class="media-actions">
+          <form method="post" action="{{ url_for('media.show', filename=image.filename) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button
+              type="submit"
+              onclick="return confirm('Wyświetlenie obrazu przełączy aktywną aplikację na odbiornik Cast. Kontynuować?')"
+            >
+              Wyświetl
+            </button>
+          </form>
+          <form method="post" action="{{ url_for('media.delete', filename=image.filename) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="danger">Usuń</button>
+          </form>
+        </div>
+      </article>
+    {% else %}
+      <p class="muted">Brak obrazów w bibliotece.</p>
+    {% endfor %}
+  </section>
+{% endblock %}

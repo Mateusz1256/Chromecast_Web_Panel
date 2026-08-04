@@ -191,6 +191,39 @@ Endpoint jest chroniony logowaniem i mapuje błędy Cast na odpowiedź offline
 bez tracebacka. Frontend odświeża status prostym pollingiem AJAX zgodnie z
 `status_refresh_seconds` z ustawień i utrzymuje tylko jedno aktywne zapytanie.
 
+## Biblioteka obrazów
+
+Widok `/media` pozwala zalogowanemu administratorowi przesłać, podejrzeć,
+usunąć i wyświetlić obraz na urządzeniu Cast. Obsługiwane typy:
+
+- JPG/JPEG;
+- PNG;
+- WebP.
+
+Upload sprawdza rozszerzenie, MIME, podstawową sygnaturę pliku, limit
+`max_upload_mb` i sanityzuje nazwę pliku. Pliki są zapisywane wyłącznie w
+skonfigurowanym katalogu mediów.
+
+Publiczny endpoint plików:
+
+```text
+GET /media/files/<filename>
+```
+
+Ten endpoint nie wymaga sesji Flask, ponieważ urządzenie Cast musi móc pobrać
+plik bez ciasteczek logowania. Odczyt nadal jest ograniczony do katalogu
+`media`, blokuje path traversal i obsługuje tylko dozwolone typy obrazów.
+
+URL wysyłany do Cast jest budowany z lokalnego adresu NAS-a i portu aplikacji:
+
+```text
+http://<nas_lan_ip>:<app_port>/media/files/<filename>
+```
+
+Przycisk „Wyświetl” uruchamia Default Media Receiver przez `CastService`.
+Widok pokazuje potwierdzenie przed przerwaniem aktywnej aplikacji oraz udostępnia
+przycisk `Stop`.
+
 ## Start po uruchomieniu DSM
 
 Docelowo aplikacja powinna mieć skrypt:

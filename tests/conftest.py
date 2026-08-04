@@ -7,6 +7,7 @@ from app.config import TestConfig
 @pytest.fixture()
 def app(tmp_path):
     class RuntimeTestConfig(TestConfig):
+        BASE_DIRECTORY = str(tmp_path)
         DATABASE_PATH = str(tmp_path / "instance" / "app.sqlite3")
         MEDIA_DIRECTORY = str(tmp_path / "media")
         LOG_DIRECTORY = str(tmp_path / "logs")

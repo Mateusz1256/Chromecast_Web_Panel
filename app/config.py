@@ -5,6 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 class AppConfig:
+    BASE_DIRECTORY = str(BASE_DIR)
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-change-me")
     APP_HOST = os.environ.get("APP_HOST", "0.0.0.0")
     APP_PORT = int(os.environ.get("APP_PORT", "5000"))

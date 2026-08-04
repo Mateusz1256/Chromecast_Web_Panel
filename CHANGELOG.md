@@ -22,3 +22,6 @@ Format bazuje na Keep a Changelog, a projekt stosuje Semantic Versioning.
   timeoutów oraz import/eksport konfiguracji bez sekretów.
 - Chroniony dashboard statusu Cast z widokiem online/offline, danymi
   urządzenia, aplikacji, głośności i mediów oraz pollingiem AJAX.
+- Biblioteka obrazów MVP z uploadem JPG/PNG/WebP, podglądem, usuwaniem,
+  bezpiecznym endpointem plików, lokalnym URL-em dla Cast, wyświetlaniem obrazu
+  i komendą `Stop`.

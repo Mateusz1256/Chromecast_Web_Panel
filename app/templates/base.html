@@ -12,6 +12,7 @@
       {% if current_user.is_authenticated %}
         <nav class="nav">
           <a href="{{ url_for('dashboard.dashboard') }}">Status</a>
+          <a href="{{ url_for('media.library') }}">Obrazy</a>
           <a href="{{ url_for('settings.settings') }}">Ustawienia</a>
           <form method="post" action="{{ url_for('auth.logout') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

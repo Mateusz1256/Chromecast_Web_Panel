@@ -40,6 +40,11 @@ input[type="submit"] {
   cursor: pointer;
 }
 
+button.danger {
+  background: var(--danger);
+  color: #210608;
+}
+
 input {
   width: 100%;
   min-height: 2.5rem;
@@ -110,6 +115,14 @@ input {
   gap: 1rem;
 }
 
+.section-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
 .eyebrow,
 .muted {
   color: var(--muted);
@@ -173,6 +186,70 @@ input {
 
 .status-grid.compact {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.upload-form {
+  grid-template-columns: 1fr auto;
+  align-items: end;
+}
+
+.media-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.media-item {
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 1rem;
+}
+
+.media-item img {
+  width: 160px;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  border-radius: 6px;
+  background: #111215;
+}
+
+.media-info {
+  min-width: 0;
+}
+
+.media-info h2 {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 1rem;
+}
+
+.media-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+@media (max-width: 720px) {
+  .topbar,
+  .nav,
+  .section-head,
+  .media-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .upload-form,
+  .media-item {
+    grid-template-columns: 1fr;
+  }
+
+  .media-item img {
+    width: 100%;
+  }
 }
 
 .narrow {

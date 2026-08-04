@@ -7,11 +7,13 @@ from flask import Flask
 from app.blueprints.auth import auth_bp
 from app.blueprints.dashboard import dashboard_bp
 from app.blueprints.health import health_bp
+from app.blueprints.media import media_bp
 from app.blueprints.settings import settings_bp
 from app.config import AppConfig
 from app.extensions import csrf, login_manager
 from app.models.user import UserStore
 from app.services.cast_service import CastService
+from app.services.media_service import MediaService
 from app.services.settings_service import SettingsService
 
 
@@ -28,6 +30,7 @@ def create_app(config_object=AppConfig):
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(health_bp)
+    app.register_blueprint(media_bp)
     app.register_blueprint(settings_bp)
     return app
 
@@ -68,7 +71,7 @@ def _register_services(app):
     user_store.init_db()
     settings_service = SettingsService(
         config_path=app.config["SETTINGS_PATH"],
-        base_directory=str(Path(app.root_path).parent),
+        base_directory=app.config["BASE_DIRECTORY"],
     )
     settings = settings_service.load()
     if not Path(app.config["SETTINGS_PATH"]).exists():
@@ -77,6 +80,11 @@ def _register_services(app):
         settings["cast_timeout_seconds"] = app.config["CAST_TIMEOUT_SECONDS"]
     app.extensions["user_store"] = user_store
     app.extensions["settings_service"] = settings_service
+    app.extensions["media_service"] = MediaService(
+        settings_service=settings_service,
+        base_directory=app.config["BASE_DIRECTORY"],
+        fallback_media_directory=app.config["MEDIA_DIRECTORY"],
+    )
     app.extensions["cast_service"] = CastService(
         cast_ip=settings["cast_ip"],
         timeout_seconds=settings["cast_timeout_seconds"],
