@@ -39,3 +39,7 @@ Versioning.
 - `.env.example` uses placeholders instead of host-specific paths or IPs.
 - Local agent prompt files, task notes and diagnostics are ignored and no longer
   tracked.
+
+### Fixed
+
+- Load `.env` before application configuration reads environment variables.

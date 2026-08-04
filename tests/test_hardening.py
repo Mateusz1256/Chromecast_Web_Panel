@@ -1,5 +1,9 @@
+import importlib
+from unittest.mock import patch
+
 import pytest
 
+import app.config as config_module
 from app import create_app
 from app.config import AppConfig
 from app.version import __version__
@@ -27,6 +31,25 @@ def test_version_is_1_0_0():
 def test_app_refuses_placeholder_secret_key():
     with pytest.raises(RuntimeError, match="SECRET_KEY"):
         create_app(WeakSecretConfig)
+
+
+def test_config_loads_secret_key_from_dotenv_before_app_config(monkeypatch):
+    monkeypatch.delenv("SECRET_KEY", raising=False)
+
+    def load_test_secret(_dotenv_path):
+        monkeypatch.setenv("SECRET_KEY", "dotenv-secret-key")
+
+    try:
+        with patch(
+            "dotenv.load_dotenv", side_effect=load_test_secret
+        ) as load_dotenv_mock:
+            reloaded_config = importlib.reload(config_module)
+
+        load_dotenv_mock.assert_called_once_with(reloaded_config.BASE_DIR / ".env")
+        assert reloaded_config.AppConfig.SECRET_KEY == "dotenv-secret-key"
+    finally:
+        monkeypatch.delenv("SECRET_KEY", raising=False)
+        importlib.reload(config_module)
 
 
 def test_diagnostics_export_requires_login(client):
