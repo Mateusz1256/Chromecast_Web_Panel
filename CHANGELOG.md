@@ -42,6 +42,7 @@ Versioning.
 - Local agent prompt files, task notes and diagnostics are ignored and no longer
   tracked.
 - Status, media and settings screens use consistent Polish labels.
+- Theme selection moved from the sidebar to Settings as a slider control.
 
 ### Fixed
 

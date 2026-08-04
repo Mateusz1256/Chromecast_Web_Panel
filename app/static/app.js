@@ -1,20 +1,19 @@
 (function () {
   var storageKey = "cast-panel-theme";
-  var toggle = document.querySelector("[data-theme-toggle]");
-  var label = document.querySelector("[data-theme-label]");
+  var switchInput = document.querySelector("[data-theme-switch]");
 
   function applyTheme(theme) {
     document.documentElement.dataset.theme = theme;
-    if (label) {
-      label.textContent = theme === "light" ? "Przełącz na ciemny" : "Przełącz na jasny";
+    if (switchInput) {
+      switchInput.checked = theme === "light";
     }
   }
 
   applyTheme(window.localStorage.getItem(storageKey) || "dark");
 
-  if (toggle) {
-    toggle.addEventListener("click", function () {
-      var next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  if (switchInput) {
+    switchInput.addEventListener("change", function () {
+      var next = switchInput.checked ? "light" : "dark";
       window.localStorage.setItem(storageKey, next);
       applyTheme(next);
     });

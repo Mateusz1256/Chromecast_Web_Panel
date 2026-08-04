@@ -28,9 +28,6 @@
             <a href="{{ url_for('audit.audit_log') }}">Dziennik</a>
           </nav>
           <div class="sidebar-footer">
-            <button type="button" class="theme-toggle" data-theme-toggle>
-              <span data-theme-label>Przełącz na jasny</span>
-            </button>
             <form method="post" action="{{ url_for('auth.logout') }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button type="submit" class="secondary full-width">Wyloguj</button>

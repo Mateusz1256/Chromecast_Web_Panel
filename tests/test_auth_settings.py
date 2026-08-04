@@ -64,6 +64,23 @@ def test_login_allows_access_to_settings(app, client):
     assert "Ustawienia" in login_response.get_data(as_text=True)
 
 
+def test_settings_page_contains_interface_preferences(app, client):
+    app.extensions["user_store"].create_admin("admin", "secret-password")
+    client.post(
+        "/login",
+        data={"username": "admin", "password": "secret-password"},
+    )
+
+    response = client.get("/settings")
+
+    assert response.status_code == 200
+    page = response.get_data(as_text=True)
+    assert "Preferencje interfejsu" in page
+    assert "Język interfejsu" in page
+    assert "Polski" in page
+    assert "data-theme-switch" in page
+
+
 def test_invalid_login_is_rejected(app, client):
     app.extensions["user_store"].create_admin("admin", "secret-password")
 
