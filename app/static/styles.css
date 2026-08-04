@@ -103,6 +103,37 @@ input[type="range"] {
   accent-color: var(--accent);
 }
 
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.file-control {
+  min-width: 0;
+}
+
+.file-picker-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 2.35rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel-soft);
+  color: var(--text);
+  font-weight: 750;
+  padding: 0.45rem 0.85rem;
+}
+
+.file-input:focus-visible + .file-picker-button {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .app-shell {
   display: grid;
   grid-template-columns: 244px minmax(0, 1fr);
@@ -396,6 +427,16 @@ input[type="range"] {
   align-items: end;
 }
 
+.file-name {
+  display: block;
+  max-width: 100%;
+  min-height: 1.4rem;
+  overflow: hidden;
+  color: var(--text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .media-list {
   display: grid;
   gap: 1rem;
@@ -454,8 +495,11 @@ input[type="range"] {
 
 .media-info h2 {
   margin: 0;
-  overflow-wrap: anywhere;
+  max-width: 100%;
+  overflow: hidden;
   font-size: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .automation-panel,

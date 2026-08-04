@@ -34,6 +34,7 @@ Versioning.
   user guide, developer guide and release checklist.
 - Sidebar-based Polish UI, separate Status and Pilot views, theme toggle and
   Cast app close command.
+- English interface language option with client-side translations.
 
 ### Changed
 
@@ -43,6 +44,7 @@ Versioning.
   tracked.
 - Status, media and settings screens use consistent Polish labels.
 - Theme selection moved from the sidebar to Settings as a slider control.
+- Selected upload file names now render on one line in the Media view.
 
 ### Fixed
 

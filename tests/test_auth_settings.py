@@ -78,6 +78,7 @@ def test_settings_page_contains_interface_preferences(app, client):
     assert "Preferencje interfejsu" in page
     assert "Język interfejsu" in page
     assert "Polski" in page
+    assert "English" in page
     assert "data-theme-switch" in page
 
 

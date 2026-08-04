@@ -8,29 +8,29 @@
   >
     <div class="page-title">
       <div>
-        <p class="eyebrow">Status</p>
-        <h1>Urządzenie Cast</h1>
+        <p class="eyebrow" data-i18n="status.eyebrow">Status</p>
+        <h1 data-i18n="status.title">Urządzenie Cast</h1>
       </div>
       <span id="online-badge" class="badge unknown">Sprawdzanie</span>
     </div>
 
     <section class="hero-status">
       <div>
-        <p class="eyebrow">Odbiornik</p>
+        <p class="eyebrow" data-i18n="status.receiver">Odbiornik</p>
         <h2 id="device-name">Ładowanie</h2>
         <p id="status-message" class="muted">Ładowanie statusu urządzenia.</p>
       </div>
       <div class="state-stack" aria-label="Skrócony stan urządzenia">
         <div>
-          <span>Stan</span>
+          <span data-i18n="status.state">Stan</span>
           <strong id="device-state">-</strong>
         </div>
         <div>
-          <span>Wejście</span>
+          <span data-i18n="status.input">Wejście</span>
           <strong id="input-state">-</strong>
         </div>
         <div>
-          <span>Głośność</span>
+          <span data-i18n="status.volume">Głośność</span>
           <strong id="volume">-</strong>
         </div>
       </div>
@@ -39,37 +39,37 @@
     <section class="panel">
       <div class="section-head">
         <div>
-          <p class="eyebrow">Szczegóły</p>
-          <h2>Połączenie i aplikacja</h2>
+          <p class="eyebrow" data-i18n="status.details.eyebrow">Szczegóły</p>
+          <h2 data-i18n="status.details.title">Połączenie i aplikacja</h2>
         </div>
       </div>
       <dl class="status-grid">
         <div>
-          <dt>Nazwa</dt>
+          <dt data-i18n="status.name">Nazwa</dt>
           <dd id="device-name-detail">-</dd>
         </div>
         <div>
-          <dt>Model</dt>
+          <dt data-i18n="status.model">Model</dt>
           <dd id="model-name">-</dd>
         </div>
         <div>
-          <dt>Aplikacja</dt>
+          <dt data-i18n="status.app">Aplikacja</dt>
           <dd id="app-name">-</dd>
         </div>
         <div>
-          <dt>Identyfikator aplikacji</dt>
+          <dt data-i18n="status.app_id">Identyfikator aplikacji</dt>
           <dd id="app-id">-</dd>
         </div>
         <div>
-          <dt>Czuwanie</dt>
+          <dt data-i18n="status.standby">Czuwanie</dt>
           <dd id="standby">-</dd>
         </div>
         <div>
-          <dt>Aktywne wejście</dt>
+          <dt data-i18n="status.active_input">Aktywne wejście</dt>
           <dd id="active-input">-</dd>
         </div>
         <div>
-          <dt>Wyciszenie</dt>
+          <dt data-i18n="status.muted">Wyciszenie</dt>
           <dd id="muted">-</dd>
         </div>
       </dl>
@@ -78,11 +78,11 @@
     <section class="panel">
       <div class="section-head">
         <div>
-          <p class="eyebrow">Treść</p>
-          <h2>Aktualnie wyświetlane media</h2>
+          <p class="eyebrow" data-i18n="status.media.eyebrow">Treść</p>
+          <h2 data-i18n="status.media.title">Aktualnie wyświetlane media</h2>
         </div>
       </div>
-      <p id="media-empty" class="muted">Brak standardowego statusu mediów dla aktywnej aplikacji.</p>
+      <p id="media-empty" class="muted" data-i18n="status.media.empty">Brak standardowego statusu mediów dla aktywnej aplikacji.</p>
       <dl id="media-status" class="status-grid compact"></dl>
     </section>
   </section>

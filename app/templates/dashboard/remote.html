@@ -10,8 +10,8 @@
   >
     <div class="page-title">
       <div>
-        <p class="eyebrow">Pilot</p>
-        <h1>Sterowanie odtwarzaniem</h1>
+        <p class="eyebrow" data-i18n="remote.eyebrow">Pilot</p>
+        <h1 data-i18n="remote.title">Sterowanie odtwarzaniem</h1>
       </div>
       <span id="online-badge" class="badge unknown">Sprawdzanie</span>
     </div>
@@ -31,7 +31,7 @@
         </div>
 
         <div class="volume-control">
-          <label for="volume-slider">Głośność</label>
+          <label for="volume-slider" data-i18n="status.volume">Głośność</label>
           <input
             id="volume-slider"
             type="range"
@@ -40,19 +40,19 @@
             step="0.01"
             value="0"
           >
-          <button type="button" class="secondary" data-remote-command="volume">Ustaw</button>
+          <button type="button" class="secondary" data-remote-command="volume" data-i18n="remote.set">Ustaw</button>
         </div>
 
         <div class="remote-actions">
-          <button type="button" class="secondary" data-remote-command="mute">Wycisz</button>
-          <button type="button" class="secondary" data-remote-command="unmute">Włącz dźwięk</button>
-          <button type="button" class="secondary" data-remote-command="quit-app">Zamknij aplikację Cast</button>
+          <button type="button" class="secondary" data-remote-command="mute" data-i18n="remote.mute">Wycisz</button>
+          <button type="button" class="secondary" data-remote-command="unmute" data-i18n="remote.unmute">Włącz dźwięk</button>
+          <button type="button" class="secondary" data-remote-command="quit-app" data-i18n="remote.quit_app">Zamknij aplikację Cast</button>
         </div>
 
         <form id="seek-form" class="seek-form">
-          <label for="seek-seconds">Przejdź do sekundy</label>
+          <label for="seek-seconds" data-i18n="remote.seek">Przejdź do sekundy</label>
           <input id="seek-seconds" type="number" min="0" step="1" value="0">
-          <button type="submit" data-needs-media="true">Przejdź</button>
+          <button type="submit" data-needs-media="true" data-i18n="remote.seek_submit">Przejdź</button>
         </form>
 
         <p id="remote-message" class="muted remote-message" role="status"></p>
@@ -61,29 +61,29 @@
       <aside class="panel remote-status">
         <div class="section-head">
           <div>
-            <p class="eyebrow">Podgląd</p>
-            <h2>Stan odbiornika</h2>
+            <p class="eyebrow" data-i18n="remote.preview">Podgląd</p>
+            <h2 data-i18n="remote.receiver_state">Stan odbiornika</h2>
           </div>
         </div>
         <dl class="status-grid compact">
           <div>
-            <dt>Stan urządzenia</dt>
+            <dt data-i18n="remote.device_state">Stan urządzenia</dt>
             <dd id="device-state">-</dd>
           </div>
           <div>
-            <dt>Wejście</dt>
+            <dt data-i18n="status.input">Wejście</dt>
             <dd id="input-state">-</dd>
           </div>
           <div>
-            <dt>Wyciszenie</dt>
+            <dt data-i18n="status.muted">Wyciszenie</dt>
             <dd id="muted">-</dd>
           </div>
           <div>
-            <dt>Odtwarzanie</dt>
+            <dt data-i18n="remote.playback">Odtwarzanie</dt>
             <dd id="player-state">-</dd>
           </div>
         </dl>
-        <p class="muted">
+        <p class="muted" data-i18n="remote.power_note">
           PyChromecast nie udostępnia stabilnego polecenia fizycznego włączenia lub wyłączenia TV.
           Przycisk zamyka aktywną aplikację Cast, jeśli odbiornik to obsługuje.
         </p>

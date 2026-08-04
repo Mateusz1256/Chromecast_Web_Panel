@@ -2,29 +2,29 @@
 
 {% block content %}
   <section class="panel">
-    <p class="eyebrow">Dziennik</p>
-    <h1>Logi techniczne</h1>
-    <p class="muted">
+    <p class="eyebrow" data-i18n="audit.eyebrow">Dziennik</p>
+    <h1 data-i18n="audit.title">Logi techniczne</h1>
+    <p class="muted" data-i18n="audit.help">
       Dziennik zawiera operacje techniczne panelu i wyniki komend. Nie zapisuje
       tytułów odtwarzanych treści ani pełnych URL-i mediów.
     </p>
   </section>
 
   <section class="panel audit-panel">
-    <h2>Ostatnie błędy</h2>
+    <h2 data-i18n="audit.errors">Ostatnie błędy</h2>
     {% for entry in errors %}
       <pre class="audit-entry">{{ entry }}</pre>
     {% else %}
-      <p class="muted">Brak błędów w ostatnich wpisach.</p>
+      <p class="muted" data-i18n="audit.no_errors">Brak błędów w ostatnich wpisach.</p>
     {% endfor %}
   </section>
 
   <section class="panel audit-panel">
-    <h2>Ostatnie operacje</h2>
+    <h2 data-i18n="audit.entries">Ostatnie operacje</h2>
     {% for entry in entries %}
       <pre class="audit-entry">{{ entry }}</pre>
     {% else %}
-      <p class="muted">Brak wpisów dziennika.</p>
+      <p class="muted" data-i18n="audit.no_entries">Brak wpisów dziennika.</p>
     {% endfor %}
   </section>
 {% endblock %}

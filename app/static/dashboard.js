@@ -13,17 +13,72 @@
   var commandInFlight = false;
   var lastStatus = {};
 
-  var mediaLabels = {
-    player_state: "Stan odtwarzania",
-    title: "Tytuł",
-    content_id: "Źródło",
-    content_type: "Typ",
-    duration: "Czas trwania",
-    current_time: "Aktualny czas"
+  var labels = {
+    pl: {
+      device_fallback: "Urządzenie Cast",
+      refreshed: "Status odświeżony.",
+      unavailable: "Urządzenie niedostępne.",
+      refresh_failed: "Nie udało się odświeżyć statusu.",
+      sending: "Wysyłanie komendy...",
+      command_done: "Komenda wykonana.",
+      command_failed: "Nie udało się wykonać komendy.",
+      yes: "Tak",
+      no: "Nie",
+      device_unavailable: "Niedostępne",
+      standby: "Czuwanie",
+      powered_on: "Włączone",
+      connected: "Połączone",
+      no_connection: "Brak połączenia",
+      cast_on_screen: "Cast na ekranie",
+      other_input: "Inne wejście",
+      unknown: "Nieznane",
+      media: {
+        player_state: "Stan odtwarzania",
+        title: "Tytuł",
+        content_id: "Źródło",
+        content_type: "Typ",
+        duration: "Czas trwania",
+        current_time: "Aktualny czas"
+      }
+    },
+    en: {
+      device_fallback: "Cast device",
+      refreshed: "Status refreshed.",
+      unavailable: "Device unavailable.",
+      refresh_failed: "Could not refresh status.",
+      sending: "Sending command...",
+      command_done: "Command completed.",
+      command_failed: "Could not run command.",
+      yes: "Yes",
+      no: "No",
+      device_unavailable: "Unavailable",
+      standby: "Standby",
+      powered_on: "On",
+      connected: "Connected",
+      no_connection: "No connection",
+      cast_on_screen: "Cast on screen",
+      other_input: "Other input",
+      unknown: "Unknown",
+      media: {
+        player_state: "Playback state",
+        title: "Title",
+        content_id: "Source",
+        content_type: "Type",
+        duration: "Duration",
+        current_time: "Current time"
+      }
+    }
   };
 
   if (!refreshMs || refreshMs < 1000) {
     refreshMs = 5000;
+  }
+
+  function currentLabels() {
+    var language = window.localStorage.getItem("cast-panel-language") === "en"
+      ? "en"
+      : "pl";
+    return labels[language];
   }
 
   function setText(id, value) {
@@ -38,10 +93,10 @@
 
   function yesNo(value) {
     if (value === true) {
-      return "Tak";
+      return currentLabels().yes;
     }
     if (value === false) {
-      return "Nie";
+      return currentLabels().no;
     }
     return "-";
   }
@@ -65,28 +120,28 @@
 
   function deviceState(status) {
     if (!status.online) {
-      return "Niedostępne";
+      return currentLabels().device_unavailable;
     }
     if (status.is_stand_by === true) {
-      return "Czuwanie";
+      return currentLabels().standby;
     }
     if (status.is_stand_by === false) {
-      return "Włączone";
+      return currentLabels().powered_on;
     }
-    return "Połączone";
+    return currentLabels().connected;
   }
 
   function inputState(status) {
     if (!status.online) {
-      return "Brak połączenia";
+      return currentLabels().no_connection;
     }
     if (status.is_active_input === true) {
-      return "Cast na ekranie";
+      return currentLabels().cast_on_screen;
     }
     if (status.is_active_input === false) {
-      return "Inne wejście";
+      return currentLabels().other_input;
     }
-    return "Nieznane";
+    return currentLabels().unknown;
   }
 
   function updateBadge(online) {
@@ -112,7 +167,7 @@
       var term = document.createElement("dt");
       var description = document.createElement("dd");
       var value = media[key];
-      term.textContent = mediaLabels[key] || key.replace(/_/g, " ");
+      term.textContent = currentLabels().media[key] || key.replace(/_/g, " ");
       if (key === "duration" || key === "current_time") {
         value = formatSeconds(value);
       }
@@ -127,7 +182,7 @@
     var status = payload.status || {};
     var media = status.media || {};
     lastStatus = status;
-    setText("device-name", status.name || "Urządzenie Cast");
+    setText("device-name", status.name || currentLabels().device_fallback);
     setText("device-name-detail", status.name);
     setText("model-name", status.model_name);
     setText("app-name", status.app_name);
@@ -141,7 +196,7 @@
     setText("player-state", media.player_state);
     setText(
       "status-message",
-      status.message || (status.online ? "Status odświeżony." : "Urządzenie niedostępne.")
+      status.message || (status.online ? currentLabels().refreshed : currentLabels().unavailable)
     );
     updateBadge(Boolean(status.online));
     renderMedia(media);
@@ -200,7 +255,7 @@
           status: {
             online: false,
             media: {},
-            message: "Nie udało się odświeżyć statusu."
+            message: currentLabels().refresh_failed
           }
         });
       })
@@ -239,7 +294,7 @@
       return;
     }
     commandInFlight = true;
-    setRemoteMessage("Wysyłanie komendy...");
+    setRemoteMessage(currentLabels().sending);
     updateRemoteState(lastStatus);
     window.fetch(remoteUrl(command), {
       method: "POST",
@@ -259,11 +314,11 @@
         });
       })
       .then(function (payload) {
-        setRemoteMessage(payload.result ? payload.result.message : "Komenda wykonana.");
+        setRemoteMessage(payload.result ? payload.result.message : currentLabels().command_done);
         render({ ok: true, status: payload.status });
       })
       .catch(function (payload) {
-        setRemoteMessage(payload && payload.message ? payload.message : "Nie udało się wykonać komendy.");
+        setRemoteMessage(payload && payload.message ? payload.message : currentLabels().command_failed);
         if (payload && payload.status) {
           render({ ok: false, status: payload.status });
         }

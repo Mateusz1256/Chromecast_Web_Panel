@@ -148,6 +148,18 @@ def test_media_library_requires_login(client):
     assert "/login" in response.headers["Location"]
 
 
+def test_media_upload_uses_stable_file_name_display(app, client):
+    login(app, client)
+
+    response = client.get("/media")
+
+    assert response.status_code == 200
+    page = response.get_data(as_text=True)
+    assert 'class="file-input"' in page
+    assert "data-file-name" in page
+    assert "Nie wybrano pliku" in page
+
+
 def test_upload_lists_and_serves_image(app, client):
     login(app, client)
 

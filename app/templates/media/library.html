@@ -4,29 +4,32 @@
   <section class="panel">
     <div class="section-head">
       <div>
-        <p class="eyebrow">Biblioteka</p>
-        <h1>Media</h1>
+        <p class="eyebrow" data-i18n="media.library.eyebrow">Biblioteka</p>
+        <h1 data-i18n="media.library.title">Media</h1>
       </div>
       <form method="post" action="{{ url_for('media.stop') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button type="submit" class="secondary">Zatrzymaj odtwarzanie</button>
+        <button type="submit" class="secondary" data-i18n="media.stop_playback">Zatrzymaj odtwarzanie</button>
       </form>
     </div>
 
     <form method="post" enctype="multipart/form-data" class="upload-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>
-        Plik multimedialny
+      <label class="file-control">
+        <span data-i18n="media.upload.file">Plik multimedialny</span>
         <input
+          class="file-input"
           type="file"
           name="media"
           accept="image/jpeg,image/png,image/webp,audio/mpeg,audio/mp4,audio/aac,audio/ogg,audio/wav,video/mp4,video/webm"
           required
         >
+        <span class="file-picker-button" data-i18n="media.upload.choose">Wybierz plik</span>
+        <span class="file-name" data-file-name data-i18n="media.upload.no_file">Nie wybrano pliku</span>
       </label>
-      <button type="submit">Prześlij</button>
+      <button type="submit" data-i18n="media.upload.submit">Prześlij</button>
     </form>
-    <p class="muted">
+    <p class="muted" data-i18n="media.upload.help">
       Audio i wideo nie są transkodowane. Zalecany format wideo to MP4 H.264 + AAC.
     </p>
   </section>
@@ -34,13 +37,13 @@
   <section class="panel automation-panel">
     <div class="section-head">
       <div>
-        <p class="eyebrow">Zadania</p>
-        <h2>Pokaz slajdów i kolejka</h2>
+        <p class="eyebrow" data-i18n="media.tasks.eyebrow">Zadania</p>
+        <h2 data-i18n="media.tasks.title">Pokaz slajdów i kolejka</h2>
       </div>
       <form method="post" action="{{ url_for('media.stop_job') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit" class="secondary" {% if not playback_status.active %}disabled{% endif %}>
-          Zatrzymaj zadanie
+          <span data-i18n="media.tasks.stop">Zatrzymaj zadanie</span>
         </button>
       </form>
     </div>
@@ -52,22 +55,22 @@
       <form method="post" action="{{ url_for('media.start_slideshow') }}" id="slideshow-form">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label>
-          Czas slajdu
+          <span data-i18n="media.tasks.slide_seconds">Czas slajdu</span>
           <input type="number" name="slide_seconds" min="1" step="1" value="5">
         </label>
-        <button type="submit">Start pokazu</button>
+        <button type="submit" data-i18n="media.tasks.start_slideshow">Start pokazu</button>
       </form>
       <form method="post" action="{{ url_for('media.start_queue') }}" id="queue-form">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button type="submit">Start kolejki</button>
+        <button type="submit" data-i18n="media.tasks.start_queue">Start kolejki</button>
       </form>
     </div>
   </section>
 
   <section class="panel presets-panel">
     <div>
-      <p class="eyebrow">Presety</p>
-      <h2>Scenariusze</h2>
+      <p class="eyebrow" data-i18n="media.presets.eyebrow">Presety</p>
+      <h2 data-i18n="media.presets.title">Scenariusze</h2>
     </div>
     <div class="preset-list">
       {% for preset in presets %}
@@ -79,16 +82,16 @@
           <div class="media-actions">
             <form method="post" action="{{ url_for('media.run_preset', name=preset.name) }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button type="submit">Uruchom</button>
+              <button type="submit" data-i18n="media.presets.run">Uruchom</button>
             </form>
             <form method="post" action="{{ url_for('media.delete_preset', name=preset.name) }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button type="submit" class="danger">Usuń</button>
+              <button type="submit" class="danger" data-i18n="common.delete">Usuń</button>
             </form>
           </div>
         </article>
       {% else %}
-        <p class="muted">Brak presetów.</p>
+        <p class="muted" data-i18n="media.presets.empty">Brak presetów.</p>
       {% endfor %}
     </div>
   </section>
@@ -103,7 +106,7 @@
             value="{{ media.filename }}"
             form="queue-form"
           >
-          <span>Kolejka</span>
+          <span data-i18n="media.queue">Kolejka</span>
         </label>
         {% if media.media_type == "image" %}
           <input
@@ -139,25 +142,29 @@
               type="submit"
               onclick="return confirm('Odtworzenie medium przełączy aktywną aplikację na odbiorniku Cast. Kontynuować?')"
             >
-              {% if media.media_type == "image" %}Wyświetl{% else %}Odtwórz{% endif %}
+              {% if media.media_type == "image" %}
+                <span data-i18n="media.display">Wyświetl</span>
+              {% else %}
+                <span data-i18n="media.play">Odtwórz</span>
+              {% endif %}
             </button>
           </form>
           <form method="post" action="{{ url_for('media.delete', filename=media.filename) }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" class="danger">Usuń</button>
+            <button type="submit" class="danger" data-i18n="common.delete">Usuń</button>
           </form>
           <form method="post" action="{{ url_for('media.save_preset') }}" class="preset-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="filename" value="{{ media.filename }}">
-            <input name="name" placeholder="Nazwa presetu" required>
-            <input name="volume" type="number" min="0" max="1" step="0.01" placeholder="Głośność">
-            <input name="stop_after_seconds" type="number" min="1" step="1" placeholder="Stop po s">
-            <button type="submit">Zapisz preset</button>
+            <input name="name" placeholder="Nazwa presetu" data-i18n-placeholder="media.presets.name_placeholder" required>
+            <input name="volume" type="number" min="0" max="1" step="0.01" placeholder="Głośność" data-i18n-placeholder="status.volume">
+            <input name="stop_after_seconds" type="number" min="1" step="1" placeholder="Stop po s" data-i18n-placeholder="media.presets.stop_after">
+            <button type="submit" data-i18n="media.presets.save">Zapisz preset</button>
           </form>
         </div>
       </article>
     {% else %}
-      <p class="muted">Brak mediów w bibliotece.</p>
+      <p class="muted" data-i18n="media.empty">Brak mediów w bibliotece.</p>
     {% endfor %}
   </section>
 {% endblock %}

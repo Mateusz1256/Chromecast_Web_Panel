@@ -4,32 +4,33 @@
   <section class="panel">
     <div class="section-head">
       <div>
-        <p class="eyebrow">Interfejs</p>
-        <h1>Preferencje interfejsu</h1>
+        <p class="eyebrow" data-i18n="settings.interface.eyebrow">Interfejs</p>
+        <h1 data-i18n="settings.interface.title">Preferencje interfejsu</h1>
       </div>
     </div>
     <div class="settings-preferences">
       <div class="preference-row">
         <div>
-          <h2>Motyw</h2>
-          <p class="muted">Przełącz wygląd panelu na jasny albo ciemny.</p>
+          <h2 data-i18n="settings.theme.title">Motyw</h2>
+          <p class="muted" data-i18n="settings.theme.help">Przełącz wygląd panelu na jasny albo ciemny.</p>
         </div>
         <label class="switch-control">
-          <span>Ciemny</span>
+          <span data-i18n="settings.theme.dark">Ciemny</span>
           <input type="checkbox" data-theme-switch aria-label="Jasny motyw">
           <span class="switch-slider" aria-hidden="true"></span>
-          <span>Jasny</span>
+          <span data-i18n="settings.theme.light">Jasny</span>
         </label>
       </div>
       <div class="preference-row">
         <div>
-          <h2>Język</h2>
-          <p class="muted">Panel jest obecnie dostępny po polsku.</p>
+          <h2 data-i18n="settings.language.title">Język</h2>
+          <p class="muted" data-i18n="settings.language.help">Wybierz język interfejsu.</p>
         </div>
         <label class="language-select">
-          <span>Język interfejsu</span>
+          <span data-i18n="settings.language.label">Język interfejsu</span>
           <select data-language-select aria-label="Język interfejsu">
             <option value="pl" selected>Polski</option>
+            <option value="en">English</option>
           </select>
         </label>
       </div>
@@ -37,7 +38,7 @@
   </section>
 
   <section class="panel">
-    <h1>Ustawienia</h1>
+    <h1 data-i18n="settings.app.title">Ustawienia</h1>
     <form method="post">
       {{ form.hidden_tag() }}
       <div class="grid">

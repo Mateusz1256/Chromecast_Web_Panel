@@ -18,19 +18,19 @@
         <aside class="sidebar" aria-label="Główne menu">
           <a class="brand" href="{{ url_for('dashboard.dashboard') }}">
             <span class="brand-mark" aria-hidden="true">▣</span>
-            <span>Panel Cast</span>
+            <span data-i18n="app.title">Panel Cast</span>
           </a>
           <nav class="nav">
-            <a href="{{ url_for('dashboard.dashboard') }}">Status</a>
-            <a href="{{ url_for('remote.remote_panel') }}">Pilot</a>
-            <a href="{{ url_for('media.library') }}">Media</a>
-            <a href="{{ url_for('settings.settings') }}">Ustawienia</a>
-            <a href="{{ url_for('audit.audit_log') }}">Dziennik</a>
+            <a href="{{ url_for('dashboard.dashboard') }}" data-i18n="nav.status">Status</a>
+            <a href="{{ url_for('remote.remote_panel') }}" data-i18n="nav.remote">Pilot</a>
+            <a href="{{ url_for('media.library') }}" data-i18n="nav.media">Media</a>
+            <a href="{{ url_for('settings.settings') }}" data-i18n="nav.settings">Ustawienia</a>
+            <a href="{{ url_for('audit.audit_log') }}" data-i18n="nav.audit">Dziennik</a>
           </nav>
           <div class="sidebar-footer">
             <form method="post" action="{{ url_for('auth.logout') }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button type="submit" class="secondary full-width">Wyloguj</button>
+              <button type="submit" class="secondary full-width" data-i18n="nav.logout">Wyloguj</button>
             </form>
           </div>
         </aside>
