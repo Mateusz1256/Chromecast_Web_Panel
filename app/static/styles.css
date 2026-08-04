@@ -212,13 +212,29 @@ input:disabled {
 
 .media-item {
   display: grid;
-  grid-template-columns: 160px 1fr auto;
+  grid-template-columns: auto auto 160px 1fr auto;
   gap: 1rem;
   align-items: center;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--panel);
   padding: 1rem;
+}
+
+.select-media {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.select-media input,
+.slideshow-select {
+  width: auto;
+  min-height: auto;
+}
+
+.slideshow-select {
+  justify-self: center;
 }
 
 .media-item img {
@@ -252,7 +268,46 @@ input:disabled {
 
 .media-actions {
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.automation-panel,
+.presets-panel {
+  margin-top: 1rem;
+}
+
+.automation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.preset-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.preset-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.75rem;
+  background: #1d1f23;
+}
+
+.preset-item h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.preset-form {
+  grid-template-columns: repeat(4, minmax(110px, 1fr));
+  width: min(620px, 100%);
 }
 
 .volume-control,
@@ -282,8 +337,14 @@ input:disabled {
   .upload-form,
   .media-item,
   .volume-control,
-  .seek-form {
+  .seek-form,
+  .preset-form {
     grid-template-columns: 1fr;
+  }
+
+  .preset-item {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .media-item img,

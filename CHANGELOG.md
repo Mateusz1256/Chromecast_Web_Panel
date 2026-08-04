@@ -31,3 +31,6 @@ Format bazuje na Keep a Changelog, a projekt stosuje Semantic Versioning.
 - Obsługa audio i wideo w bibliotece mediów: upload MP3/AAC/M4A/OGG/WAV oraz
   MP4/WebM, odtwarzanie przez Default Media Receiver, bezpieczna domyślna
   głośność audio i przywracanie poprzedniej głośności po `Stop`.
+- Pokaz slajdów, kolejka mediów i presety z jednym aktywnym zadaniem,
+  możliwością zatrzymania oraz bez automatycznego wznawiania komend po
+  restarcie aplikacji.

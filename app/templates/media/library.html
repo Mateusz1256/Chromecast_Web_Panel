@@ -31,9 +31,90 @@
     </p>
   </section>
 
+  <section class="panel automation-panel">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Zadania</p>
+        <h2>Pokaz slajdów i kolejka</h2>
+      </div>
+      <form method="post" action="{{ url_for('media.stop_job') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" {% if not playback_status.active %}disabled{% endif %}>
+          Zatrzymaj zadanie
+        </button>
+      </form>
+    </div>
+    <p class="muted">
+      Status: {{ playback_status.message }}
+      {% if playback_status.current %}· {{ playback_status.current }}{% endif %}
+    </p>
+    <div class="automation-actions">
+      <form method="post" action="{{ url_for('media.start_slideshow') }}" id="slideshow-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>
+          Czas slajdu
+          <input type="number" name="slide_seconds" min="1" step="1" value="5">
+        </label>
+        <button type="submit">Start slajdów</button>
+      </form>
+      <form method="post" action="{{ url_for('media.start_queue') }}" id="queue-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">Start kolejki</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="panel presets-panel">
+    <div>
+      <p class="eyebrow">Presety</p>
+      <h2>Scenariusze</h2>
+    </div>
+    <div class="preset-list">
+      {% for preset in presets %}
+        <article class="preset-item">
+          <div>
+            <h3>{{ preset.name }}</h3>
+            <p class="muted">{{ preset.filename }} · {{ preset.media_type }}</p>
+          </div>
+          <div class="media-actions">
+            <form method="post" action="{{ url_for('media.run_preset', name=preset.name) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit">Uruchom</button>
+            </form>
+            <form method="post" action="{{ url_for('media.delete_preset', name=preset.name) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="danger">Usuń</button>
+            </form>
+          </div>
+        </article>
+      {% else %}
+        <p class="muted">Brak presetów.</p>
+      {% endfor %}
+    </div>
+  </section>
+
   <section class="media-list">
     {% for media in media_files %}
       <article class="media-item">
+        <label class="select-media">
+          <input
+            type="checkbox"
+            name="filenames"
+            value="{{ media.filename }}"
+            form="queue-form"
+          >
+          <span>Kolejka</span>
+        </label>
+        {% if media.media_type == "image" %}
+          <input
+            type="checkbox"
+            name="filenames"
+            value="{{ media.filename }}"
+            form="slideshow-form"
+            class="slideshow-select"
+            aria-label="Dodaj {{ media.filename }} do pokazu slajdów"
+          >
+        {% endif %}
         {% if media.media_type == "image" %}
           <img
             src="{{ url_for('media.file', filename=media.filename) }}"
@@ -64,6 +145,14 @@
           <form method="post" action="{{ url_for('media.delete', filename=media.filename) }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="danger">Usuń</button>
+          </form>
+          <form method="post" action="{{ url_for('media.save_preset') }}" class="preset-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="filename" value="{{ media.filename }}">
+            <input name="name" placeholder="Nazwa preset" required>
+            <input name="volume" type="number" min="0" max="1" step="0.01" placeholder="Głośność">
+            <input name="stop_after_seconds" type="number" min="1" step="1" placeholder="Stop po s">
+            <button type="submit">Zapisz preset</button>
           </form>
         </div>
       </article>

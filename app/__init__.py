@@ -15,6 +15,7 @@ from app.extensions import csrf, login_manager
 from app.models.user import UserStore
 from app.services.cast_service import CastService
 from app.services.media_service import MediaService
+from app.services.playback_service import PlaybackService
 from app.services.rate_limiter import CommandRateLimiter
 from app.services.settings_service import SettingsService
 
@@ -94,6 +95,11 @@ def _register_services(app):
     app.extensions["cast_service"] = CastService(
         cast_ip=settings["cast_ip"],
         timeout_seconds=settings["cast_timeout_seconds"],
+    )
+    app.extensions["playback_service"] = PlaybackService(
+        media_service=app.extensions["media_service"],
+        cast_service=app.extensions["cast_service"],
+        presets_path=app.config["PRESETS_PATH"],
     )
 
 

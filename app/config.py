@@ -22,6 +22,10 @@ class AppConfig:
         "SETTINGS_PATH",
         str(BASE_DIR / "instance" / "config.json"),
     )
+    PRESETS_PATH = os.environ.get(
+        "PRESETS_PATH",
+        str(BASE_DIR / "instance" / "presets.json"),
+    )
 
     MEDIA_DIRECTORY = os.environ.get(
         "MEDIA_DIRECTORY",

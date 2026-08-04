@@ -256,6 +256,17 @@ głośność `default_audio_volume`, nie przekraczając `max_volume`, i zapamię
 poprzedni poziom do przywrócenia po `Stop`. Widok pokazuje potwierdzenie przed
 przerwaniem aktywnej aplikacji oraz udostępnia przycisk `Stop`.
 
+Biblioteka obsługuje też proste scenariusze:
+
+- pokaz slajdów z wyborem obrazów i czasem slajdu;
+- kolejkę wybranych mediów;
+- presety zapisywane w `instance/presets.json`.
+
+Aktywne zadanie jest trzymane wyłącznie w pamięci procesu. Aplikacja dopuszcza
+tylko jedno aktywne zadanie naraz, pozwala je zatrzymać i nie wznawia komend
+samoczynnie po restarcie. Presety przetrwają restart, ale uruchomienie presetu
+zawsze wymaga jawnej akcji użytkownika.
+
 ## Start po uruchomieniu DSM
 
 Docelowo aplikacja powinna mieć skrypt:

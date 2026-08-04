@@ -2,6 +2,7 @@ from flask import (
     Blueprint,
     current_app,
     flash,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -13,6 +14,10 @@ from flask_login import login_required
 
 from app.services.cast_service import CastServiceError
 from app.services.media_service import MediaNotFoundError, MediaValidationError
+from app.services.playback_service import (
+    PlaybackJobAlreadyRunning,
+    PlaybackJobNotRunning,
+)
 
 media_bp = Blueprint("media", __name__, url_prefix="/media")
 
@@ -38,7 +43,13 @@ def library():
             flash("Media uploaded", "success")
         return redirect(url_for("media.library"))
 
-    return render_template("media/library.html", media_files=media_service.list_media())
+    playback_service = current_app.extensions["playback_service"]
+    return render_template(
+        "media/library.html",
+        media_files=media_service.list_media(),
+        playback_status=playback_service.status(),
+        presets=playback_service.load_presets(),
+    )
 
 
 @media_bp.get("/files/<path:filename>")
@@ -112,6 +123,92 @@ def stop():
     return redirect(url_for("media.library"))
 
 
+@media_bp.post("/slideshow/start")
+@login_required
+def start_slideshow():
+    playback_service = current_app.extensions["playback_service"]
+    filenames = request.form.getlist("filenames")
+    try:
+        slide_seconds = float(request.form.get("slide_seconds", "5"))
+        playback_service.start_slideshow(filenames, slide_seconds)
+    except (ValueError, MediaValidationError, PlaybackJobAlreadyRunning) as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Slideshow started", "success")
+    return redirect(url_for("media.library"))
+
+
+@media_bp.post("/queue/start")
+@login_required
+def start_queue():
+    playback_service = current_app.extensions["playback_service"]
+    filenames = request.form.getlist("filenames")
+    try:
+        playback_service.start_queue(filenames)
+    except (ValueError, MediaValidationError, PlaybackJobAlreadyRunning) as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Queue started", "success")
+    return redirect(url_for("media.library"))
+
+
+@media_bp.post("/job/stop")
+@login_required
+def stop_job():
+    playback_service = current_app.extensions["playback_service"]
+    try:
+        playback_service.stop()
+    except PlaybackJobNotRunning as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Playback job stopping", "success")
+    return redirect(url_for("media.library"))
+
+
+@media_bp.get("/job/status")
+@login_required
+def job_status():
+    return jsonify(current_app.extensions["playback_service"].status())
+
+
+@media_bp.post("/presets")
+@login_required
+def save_preset():
+    playback_service = current_app.extensions["playback_service"]
+    filename = request.form.get("filename", "")
+    name = request.form.get("name", "")
+    try:
+        volume = _optional_float(request.form.get("volume"))
+        stop_after_seconds = _optional_float(request.form.get("stop_after_seconds"))
+        playback_service.save_preset(name, filename, volume, stop_after_seconds)
+    except (ValueError, MediaValidationError) as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Preset saved", "success")
+    return redirect(url_for("media.library"))
+
+
+@media_bp.post("/presets/<name>/run")
+@login_required
+def run_preset(name):
+    playback_service = current_app.extensions["playback_service"]
+    try:
+        playback_service.run_preset(name)
+    except (ValueError, MediaValidationError, PlaybackJobAlreadyRunning) as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Preset started", "success")
+    return redirect(url_for("media.library"))
+
+
+@media_bp.post("/presets/<name>/delete")
+@login_required
+def delete_preset(name):
+    current_app.extensions["playback_service"].delete_preset(name)
+    flash("Preset deleted", "success")
+    return redirect(url_for("media.library"))
+
+
 def _set_default_audio_volume(cast_service):
     settings = current_app.extensions["settings_service"].load()
     status = cast_service.get_status()
@@ -129,3 +226,9 @@ def _restore_previous_volume(cast_service):
     previous_volume = session.pop("previous_audio_volume", None)
     if previous_volume is not None:
         cast_service.set_volume(float(previous_volume))
+
+
+def _optional_float(value):
+    if value is None or value == "":
+        return None
+    return float(value)
