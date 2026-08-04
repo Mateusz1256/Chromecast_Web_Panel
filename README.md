@@ -191,6 +191,19 @@ Endpoint jest chroniony logowaniem i mapuje błędy Cast na odpowiedź offline
 bez tracebacka. Frontend odświeża status prostym pollingiem AJAX zgodnie z
 `status_refresh_seconds` z ustawień i utrzymuje tylko jedno aktywne zapytanie.
 
+Dashboard zawiera też podstawowy pilot:
+
+- ustawianie głośności suwakiem;
+- mute/unmute;
+- play/pause/stop;
+- seek, gdy dostępny jest standardowy status mediów.
+
+Komendy pilota są wysyłane do endpointów `/remote/*` metodą POST i wymagają
+zalogowania oraz CSRF. Backend zawsze wymusza `max_volume` z ustawień, więc
+frontend nie może przypadkiem ustawić 100%. Każda poprawnie wykonana komenda
+zwraca świeży status urządzenia. Prosty rate limit `COMMAND_RATE_LIMIT_SECONDS`
+ogranicza zbyt szybkie powtarzanie tej samej komendy.
+
 ## Biblioteka obrazów
 
 Widok `/media` pozwala zalogowanemu administratorowi przesłać, podejrzeć,

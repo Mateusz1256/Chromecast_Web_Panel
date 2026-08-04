@@ -11,6 +11,9 @@ class AppConfig:
     APP_PORT = int(os.environ.get("APP_PORT", "5000"))
     CAST_IP = os.environ.get("CAST_IP", "")
     CAST_TIMEOUT_SECONDS = float(os.environ.get("CAST_TIMEOUT_SECONDS", "10"))
+    COMMAND_RATE_LIMIT_SECONDS = float(
+        os.environ.get("COMMAND_RATE_LIMIT_SECONDS", "0.75")
+    )
     DATABASE_PATH = os.environ.get(
         "DATABASE_PATH",
         str(BASE_DIR / "instance" / "app.sqlite3"),
@@ -39,4 +42,5 @@ class TestConfig(AppConfig):
     TESTING = True
     CAST_IP = "192.168.0.39"
     SECRET_KEY = "test-secret-key"
+    COMMAND_RATE_LIMIT_SECONDS = 0
     WTF_CSRF_ENABLED = False

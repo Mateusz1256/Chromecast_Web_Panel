@@ -5,6 +5,8 @@
     class="dashboard"
     data-status-url="{{ url_for('dashboard.status') }}"
     data-refresh-ms="{{ (status_refresh_seconds * 1000)|int }}"
+    data-csrf-token="{{ csrf_token() }}"
+    data-max-volume="{{ max_volume }}"
   >
     <div class="status-card">
       <div class="status-head">
@@ -51,6 +53,43 @@
       <h2>Media</h2>
       <p id="media-empty" class="muted">Brak standardowego statusu mediów.</p>
       <dl id="media-status" class="status-grid compact"></dl>
+    </div>
+
+    <div class="remote-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Pilot</p>
+          <h2>Sterowanie</h2>
+        </div>
+        <p id="remote-message" class="muted" role="status"></p>
+      </div>
+
+      <div class="volume-control">
+        <label for="volume-slider">Głośność</label>
+        <input
+          id="volume-slider"
+          type="range"
+          min="0"
+          max="{{ max_volume }}"
+          step="0.01"
+          value="0"
+        >
+        <button type="button" data-remote-command="volume">Ustaw</button>
+      </div>
+
+      <div class="remote-buttons">
+        <button type="button" data-remote-command="resume">Play</button>
+        <button type="button" data-remote-command="pause">Pause</button>
+        <button type="button" data-remote-command="stop">Stop</button>
+        <button type="button" data-remote-command="mute">Mute</button>
+        <button type="button" data-remote-command="unmute">Unmute</button>
+      </div>
+
+      <form id="seek-form" class="seek-form">
+        <label for="seek-seconds">Seek</label>
+        <input id="seek-seconds" type="number" min="0" step="1" value="0">
+        <button type="submit" data-needs-media="true">Przejdź</button>
+      </form>
     </div>
   </section>
   <script src="{{ url_for('static', filename='dashboard.js') }}" defer></script>

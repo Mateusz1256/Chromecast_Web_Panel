@@ -25,3 +25,6 @@ Format bazuje na Keep a Changelog, a projekt stosuje Semantic Versioning.
 - Biblioteka obrazów MVP z uploadem JPG/PNG/WebP, podglądem, usuwaniem,
   bezpiecznym endpointem plików, lokalnym URL-em dla Cast, wyświetlaniem obrazu
   i komendą `Stop`.
+- Podstawowy pilot na dashboardzie: głośność z backendowym limitem, mute,
+  unmute, play, pause, stop, seek, odświeżanie statusu po komendzie i rate
+  limit dla komend sterujących.
