@@ -124,6 +124,25 @@ class PyChromecastAdapter:
     def stop(self, handle: Any) -> None:
         self._media_command(handle, "stop")
 
+    def quit_app(self, handle: Any) -> None:
+        cast = handle["cast"]
+        command = getattr(cast, "quit_app", None)
+        try:
+            if command is not None:
+                command()
+                return
+            receiver_controller = getattr(cast, "receiver_controller", None)
+            stop_app = getattr(receiver_controller, "stop_app", None)
+            if stop_app is None:
+                raise CastUnsupportedCommand("Closing the active app is unsupported")
+            stop_app()
+        except CastUnsupportedCommand:
+            raise
+        except Exception as exc:
+            raise CastUnsupportedCommand(
+                "Closing the active app is unsupported"
+            ) from exc
+
     def seek(self, handle: Any, seconds: float) -> None:
         media_controller = self._media_controller(handle)
         try:
@@ -247,6 +266,10 @@ class CastService:
     def stop(self) -> Dict[str, Any]:
         self._run_connected_command(self.adapter.stop)
         return self._command_result("stop", "Playback stopped")
+
+    def quit_app(self) -> Dict[str, Any]:
+        self._run_connected_command(self.adapter.quit_app)
+        return self._command_result("quit_app", "Active Cast app closed")
 
     def seek(self, seconds: float) -> Dict[str, Any]:
         if seconds < 0:

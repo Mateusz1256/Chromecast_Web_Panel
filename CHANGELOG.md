@@ -32,6 +32,8 @@ Versioning.
 - Version `1.0.0`, strong secret key validation, secure session defaults,
   versioned settings migration, secret-free diagnostics export, restore script,
   user guide, developer guide and release checklist.
+- Sidebar-based Polish UI, separate Status and Pilot views, theme toggle and
+  Cast app close command.
 
 ### Changed
 
@@ -39,6 +41,7 @@ Versioning.
 - `.env.example` uses placeholders instead of host-specific paths or IPs.
 - Local agent prompt files, task notes and diagnostics are ignored and no longer
   tracked.
+- Status, media and settings screens use consistent Polish labels.
 
 ### Fixed
 

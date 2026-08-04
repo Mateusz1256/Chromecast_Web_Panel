@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section
+    class="cast-panel remote-view"
+    data-status-url="{{ url_for('dashboard.status') }}"
+    data-refresh-ms="{{ (status_refresh_seconds * 1000)|int }}"
+    data-csrf-token="{{ csrf_token() }}"
+    data-max-volume="{{ max_volume }}"
+  >
+    <div class="page-title">
+      <div>
+        <p class="eyebrow">Pilot</p>
+        <h1>Sterowanie odtwarzaniem</h1>
+      </div>
+      <span id="online-badge" class="badge unknown">Sprawdzanie</span>
+    </div>
+
+    <section class="remote-layout">
+      <div class="remote-body" aria-label="Pilot Cast">
+        <div class="remote-screen">
+          <span id="device-name">Urządzenie Cast</span>
+          <strong id="app-name">-</strong>
+          <small id="status-message">Ładowanie statusu.</small>
+        </div>
+
+        <div class="remote-pad">
+          <button type="button" class="round-button" data-remote-command="resume" aria-label="Odtwórz">▶</button>
+          <button type="button" class="round-button" data-remote-command="pause" aria-label="Pauza">Ⅱ</button>
+          <button type="button" class="round-button danger-soft" data-remote-command="stop" aria-label="Stop">■</button>
+        </div>
+
+        <div class="volume-control">
+          <label for="volume-slider">Głośność</label>
+          <input
+            id="volume-slider"
+            type="range"
+            min="0"
+            max="{{ max_volume }}"
+            step="0.01"
+            value="0"
+          >
+          <button type="button" class="secondary" data-remote-command="volume">Ustaw</button>
+        </div>
+
+        <div class="remote-actions">
+          <button type="button" class="secondary" data-remote-command="mute">Wycisz</button>
+          <button type="button" class="secondary" data-remote-command="unmute">Włącz dźwięk</button>
+          <button type="button" class="secondary" data-remote-command="quit-app">Zamknij aplikację Cast</button>
+        </div>
+
+        <form id="seek-form" class="seek-form">
+          <label for="seek-seconds">Przejdź do sekundy</label>
+          <input id="seek-seconds" type="number" min="0" step="1" value="0">
+          <button type="submit" data-needs-media="true">Przejdź</button>
+        </form>
+
+        <p id="remote-message" class="muted remote-message" role="status"></p>
+      </div>
+
+      <aside class="panel remote-status">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Podgląd</p>
+            <h2>Stan odbiornika</h2>
+          </div>
+        </div>
+        <dl class="status-grid compact">
+          <div>
+            <dt>Stan urządzenia</dt>
+            <dd id="device-state">-</dd>
+          </div>
+          <div>
+            <dt>Wejście</dt>
+            <dd id="input-state">-</dd>
+          </div>
+          <div>
+            <dt>Wyciszenie</dt>
+            <dd id="muted">-</dd>
+          </div>
+          <div>
+            <dt>Odtwarzanie</dt>
+            <dd id="player-state">-</dd>
+          </div>
+        </dl>
+        <p class="muted">
+          PyChromecast nie udostępnia stabilnego polecenia fizycznego włączenia lub wyłączenia TV.
+          Przycisk zamyka aktywną aplikację Cast, jeśli odbiornik to obsługuje.
+        </p>
+      </aside>
+    </section>
+  </section>
+  <script src="{{ url_for('static', filename='dashboard.js') }}" defer></script>
+{% endblock %}

@@ -2,22 +2,52 @@
 
 {% block content %}
   <section
-    class="dashboard"
+    class="cast-panel status-view"
     data-status-url="{{ url_for('dashboard.status') }}"
     data-refresh-ms="{{ (status_refresh_seconds * 1000)|int }}"
-    data-csrf-token="{{ csrf_token() }}"
-    data-max-volume="{{ max_volume }}"
   >
-    <div class="status-card">
-      <div class="status-head">
-        <div>
-          <p class="eyebrow">Urządzenie Cast</p>
-          <h1 id="device-name">Status</h1>
-        </div>
-        <span id="online-badge" class="badge unknown">Sprawdzanie</span>
+    <div class="page-title">
+      <div>
+        <p class="eyebrow">Status</p>
+        <h1>Urządzenie Cast</h1>
       </div>
-      <p id="status-message" class="muted">Ładowanie statusu urządzenia.</p>
+      <span id="online-badge" class="badge unknown">Sprawdzanie</span>
+    </div>
+
+    <section class="hero-status">
+      <div>
+        <p class="eyebrow">Odbiornik</p>
+        <h2 id="device-name">Ładowanie</h2>
+        <p id="status-message" class="muted">Ładowanie statusu urządzenia.</p>
+      </div>
+      <div class="state-stack" aria-label="Skrócony stan urządzenia">
+        <div>
+          <span>Stan</span>
+          <strong id="device-state">-</strong>
+        </div>
+        <div>
+          <span>Wejście</span>
+          <strong id="input-state">-</strong>
+        </div>
+        <div>
+          <span>Głośność</span>
+          <strong id="volume">-</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Szczegóły</p>
+          <h2>Połączenie i aplikacja</h2>
+        </div>
+      </div>
       <dl class="status-grid">
+        <div>
+          <dt>Nazwa</dt>
+          <dd id="device-name-detail">-</dd>
+        </div>
         <div>
           <dt>Model</dt>
           <dd id="model-name">-</dd>
@@ -27,11 +57,11 @@
           <dd id="app-name">-</dd>
         </div>
         <div>
-          <dt>App ID</dt>
+          <dt>Identyfikator aplikacji</dt>
           <dd id="app-id">-</dd>
         </div>
         <div>
-          <dt>Standby</dt>
+          <dt>Czuwanie</dt>
           <dd id="standby">-</dd>
         </div>
         <div>
@@ -39,58 +69,22 @@
           <dd id="active-input">-</dd>
         </div>
         <div>
-          <dt>Głośność</dt>
-          <dd id="volume">-</dd>
-        </div>
-        <div>
           <dt>Wyciszenie</dt>
           <dd id="muted">-</dd>
         </div>
       </dl>
-    </div>
+    </section>
 
-    <div class="media-panel">
-      <h2>Media</h2>
-      <p id="media-empty" class="muted">Brak standardowego statusu mediów.</p>
-      <dl id="media-status" class="status-grid compact"></dl>
-    </div>
-
-    <div class="remote-panel">
+    <section class="panel">
       <div class="section-head">
         <div>
-          <p class="eyebrow">Pilot</p>
-          <h2>Sterowanie</h2>
+          <p class="eyebrow">Treść</p>
+          <h2>Aktualnie wyświetlane media</h2>
         </div>
-        <p id="remote-message" class="muted" role="status"></p>
       </div>
-
-      <div class="volume-control">
-        <label for="volume-slider">Głośność</label>
-        <input
-          id="volume-slider"
-          type="range"
-          min="0"
-          max="{{ max_volume }}"
-          step="0.01"
-          value="0"
-        >
-        <button type="button" data-remote-command="volume">Ustaw</button>
-      </div>
-
-      <div class="remote-buttons">
-        <button type="button" data-remote-command="resume">Play</button>
-        <button type="button" data-remote-command="pause">Pause</button>
-        <button type="button" data-remote-command="stop">Stop</button>
-        <button type="button" data-remote-command="mute">Mute</button>
-        <button type="button" data-remote-command="unmute">Unmute</button>
-      </div>
-
-      <form id="seek-form" class="seek-form">
-        <label for="seek-seconds">Seek</label>
-        <input id="seek-seconds" type="number" min="0" step="1" value="0">
-        <button type="submit" data-needs-media="true">Przejdź</button>
-      </form>
-    </div>
+      <p id="media-empty" class="muted">Brak standardowego statusu mediów dla aktywnej aplikacji.</p>
+      <dl id="media-status" class="status-grid compact"></dl>
+    </section>
   </section>
   <script src="{{ url_for('static', filename='dashboard.js') }}" defer></script>
 {% endblock %}

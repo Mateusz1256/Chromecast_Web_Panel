@@ -11,38 +11,38 @@ from wtforms.validators import DataRequired, NumberRange
 
 
 class LoginForm(FlaskForm):
-    username = StringField("Username", validators=[DataRequired()])
-    password = PasswordField("Password", validators=[DataRequired()])
-    submit = SubmitField("Log in")
+    username = StringField("Nazwa użytkownika", validators=[DataRequired()])
+    password = PasswordField("Hasło", validators=[DataRequired()])
+    submit = SubmitField("Zaloguj")
 
 
 class SettingsForm(FlaskForm):
-    cast_ip = StringField("Cast IP", validators=[DataRequired()])
-    nas_lan_ip = StringField("NAS LAN IP", validators=[DataRequired()])
+    cast_ip = StringField("Adres IP urządzenia Cast", validators=[DataRequired()])
+    nas_lan_ip = StringField("Adres IP NAS w sieci LAN", validators=[DataRequired()])
     app_port = IntegerField(
-        "Application port",
+        "Port aplikacji",
         validators=[DataRequired(), NumberRange(min=1, max=65535)],
     )
-    media_directory = StringField("Media directory", validators=[DataRequired()])
+    media_directory = StringField("Katalog multimediów", validators=[DataRequired()])
     max_upload_mb = IntegerField(
-        "Max upload MB",
+        "Maksymalny rozmiar pliku w MB",
         validators=[DataRequired(), NumberRange(min=1, max=2048)],
     )
     max_volume = FloatField(
-        "Max volume",
+        "Maksymalna głośność",
         validators=[DataRequired(), NumberRange(min=0.01, max=1)],
     )
     default_audio_volume = FloatField(
-        "Default audio volume",
+        "Domyślna głośność audio",
         validators=[DataRequired(), NumberRange(min=0, max=1)],
     )
     cast_timeout_seconds = FloatField(
-        "Cast timeout seconds",
+        "Limit czasu Cast w sekundach",
         validators=[DataRequired(), NumberRange(min=1, max=60)],
     )
     status_refresh_seconds = FloatField(
-        "Status refresh seconds",
+        "Odświeżanie statusu w sekundach",
         validators=[DataRequired(), NumberRange(min=1, max=120)],
     )
-    monitor_app_changes = BooleanField("Monitor active app changes")
-    submit = SubmitField("Save")
+    monitor_app_changes = BooleanField("Monitoruj zmianę aktywnej aplikacji")
+    submit = SubmitField("Zapisz")

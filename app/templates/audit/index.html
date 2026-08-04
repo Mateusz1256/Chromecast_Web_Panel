@@ -2,10 +2,10 @@
 
 {% block content %}
   <section class="panel">
-    <p class="eyebrow">Audyt</p>
+    <p class="eyebrow">Dziennik</p>
     <h1>Logi techniczne</h1>
     <p class="muted">
-      Log zawiera operacje techniczne panelu i wyniki komend. Nie zapisuje
+      Dziennik zawiera operacje techniczne panelu i wyniki komend. Nie zapisuje
       tytułów odtwarzanych treści ani pełnych URL-i mediów.
     </p>
   </section>
@@ -24,7 +24,7 @@
     {% for entry in entries %}
       <pre class="audit-entry">{{ entry }}</pre>
     {% else %}
-      <p class="muted">Brak wpisów audytu.</p>
+      <p class="muted">Brak wpisów dziennika.</p>
     {% endfor %}
   </section>
 {% endblock %}

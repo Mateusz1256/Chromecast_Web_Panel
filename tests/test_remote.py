@@ -50,6 +50,14 @@ class FakeRemoteCastService:
         self.commands.append(("stop",))
         return {"ok": True, "command": "stop", "message": "Playback stopped"}
 
+    def quit_app(self):
+        self.commands.append(("quit_app",))
+        return {
+            "ok": True,
+            "command": "quit_app",
+            "message": "Active Cast app closed",
+        }
+
     def seek(self, seconds):
         self.commands.append(("seek", seconds))
         return {"ok": True, "command": "seek", "message": "Seek command sent"}
@@ -69,6 +77,22 @@ def test_remote_requires_login(client):
 
     assert response.status_code == 302
     assert "/login" in response.headers["Location"]
+
+
+def test_remote_panel_requires_login(client):
+    response = client.get("/remote/")
+
+    assert response.status_code == 302
+    assert "/login" in response.headers["Location"]
+
+
+def test_remote_panel_renders_pilot(app, client):
+    login(app, client)
+
+    response = client.get("/remote/")
+
+    assert response.status_code == 200
+    assert "Pilot" in response.get_data(as_text=True)
 
 
 def test_volume_command_enforces_configured_max(app, client):
@@ -119,6 +143,18 @@ def test_remote_maps_unsupported_command(app, client):
 
     assert response.status_code == 400
     assert response.get_json()["message"] == "pause is unsupported"
+
+
+def test_quit_app_command_returns_refreshed_status(app, client):
+    fake_cast = FakeRemoteCastService()
+    app.extensions["cast_service"] = fake_cast
+    login(app, client)
+
+    response = client.post("/remote/quit-app")
+
+    assert response.status_code == 200
+    assert response.get_json()["result"]["command"] == "quit_app"
+    assert fake_cast.commands == [("quit_app",)]
 
 
 def test_remote_rate_limits_repeated_command(app, client):

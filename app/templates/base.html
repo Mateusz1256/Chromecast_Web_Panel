@@ -1,38 +1,56 @@
 <!doctype html>
-<html lang="pl">
+<html lang="pl" data-theme="dark">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cast Control Panel</title>
+    <title>Panel Cast</title>
+    <script>
+      (function () {
+        var theme = window.localStorage.getItem("cast-panel-theme") || "dark";
+        document.documentElement.dataset.theme = theme;
+      }());
+    </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   </head>
   <body>
-    <header class="topbar">
-      <a class="brand" href="{{ url_for('dashboard.dashboard') }}">Cast Control Panel</a>
+    <div class="app-shell{% if not current_user.is_authenticated %} auth-shell{% endif %}">
       {% if current_user.is_authenticated %}
-        <nav class="nav">
-          <a href="{{ url_for('dashboard.dashboard') }}">Status</a>
-          <a href="{{ url_for('media.library') }}">Obrazy</a>
-          <a href="{{ url_for('settings.settings') }}">Ustawienia</a>
-          <a href="{{ url_for('audit.audit_log') }}">Logi</a>
-          <form method="post" action="{{ url_for('auth.logout') }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit">Wyloguj</button>
-          </form>
-        </nav>
-      {% endif %}
-    </header>
-    <main class="page">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <div class="messages">
-            {% for category, message in messages %}
-              <p class="message {{ category }}">{{ message }}</p>
-            {% endfor %}
+        <aside class="sidebar" aria-label="Główne menu">
+          <a class="brand" href="{{ url_for('dashboard.dashboard') }}">
+            <span class="brand-mark" aria-hidden="true">▣</span>
+            <span>Panel Cast</span>
+          </a>
+          <nav class="nav">
+            <a href="{{ url_for('dashboard.dashboard') }}">Status</a>
+            <a href="{{ url_for('remote.remote_panel') }}">Pilot</a>
+            <a href="{{ url_for('media.library') }}">Media</a>
+            <a href="{{ url_for('settings.settings') }}">Ustawienia</a>
+            <a href="{{ url_for('audit.audit_log') }}">Dziennik</a>
+          </nav>
+          <div class="sidebar-footer">
+            <button type="button" class="theme-toggle" data-theme-toggle>
+              <span data-theme-label>Przełącz na jasny</span>
+            </button>
+            <form method="post" action="{{ url_for('auth.logout') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="secondary full-width">Wyloguj</button>
+            </form>
           </div>
-        {% endif %}
-      {% endwith %}
-      {% block content %}{% endblock %}
-    </main>
+        </aside>
+      {% endif %}
+      <main class="page">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="messages">
+              {% for category, message in messages %}
+                <p class="message {{ category }}">{{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
   </body>
 </html>

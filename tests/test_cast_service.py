@@ -58,6 +58,9 @@ class FakeAdapter:
     def stop(self, handle):
         self.commands.append(("stop",))
 
+    def quit_app(self, handle):
+        self.commands.append(("quit_app",))
+
     def seek(self, handle, seconds):
         self.commands.append(("seek", seconds))
 
@@ -146,6 +149,20 @@ def test_volume_is_validated_before_command():
         service.set_volume(1.1)
 
     assert adapter.commands == []
+
+
+def test_quit_app_returns_standard_result():
+    adapter = FakeAdapter()
+    service = CastService("192.168.0.39", adapter=adapter)
+
+    result = service.quit_app()
+
+    assert result == {
+        "ok": True,
+        "command": "quit_app",
+        "message": "Active Cast app closed",
+    }
+    assert adapter.commands == [("quit_app",)]
 
 
 def test_commands_are_serialized_by_lock():

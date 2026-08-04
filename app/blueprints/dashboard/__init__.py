@@ -13,7 +13,6 @@ def dashboard():
     return render_template(
         "dashboard/index.html",
         status_refresh_seconds=settings["status_refresh_seconds"],
-        max_volume=settings["max_volume"],
     )
 
 

@@ -9,7 +9,7 @@
       </div>
       <form method="post" action="{{ url_for('media.stop') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button type="submit">Stop</button>
+        <button type="submit" class="secondary">Zatrzymaj odtwarzanie</button>
       </form>
     </div>
 
@@ -39,14 +39,14 @@
       </div>
       <form method="post" action="{{ url_for('media.stop_job') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button type="submit" {% if not playback_status.active %}disabled{% endif %}>
+        <button type="submit" class="secondary" {% if not playback_status.active %}disabled{% endif %}>
           Zatrzymaj zadanie
         </button>
       </form>
     </div>
     <p class="muted">
       Status: {{ playback_status.message }}
-      {% if playback_status.current %}· {{ playback_status.current }}{% endif %}
+      {% if playback_status.current %} · {{ playback_status.current }}{% endif %}
     </p>
     <div class="automation-actions">
       <form method="post" action="{{ url_for('media.start_slideshow') }}" id="slideshow-form">
@@ -55,7 +55,7 @@
           Czas slajdu
           <input type="number" name="slide_seconds" min="1" step="1" value="5">
         </label>
-        <button type="submit">Start slajdów</button>
+        <button type="submit">Start pokazu</button>
       </form>
       <form method="post" action="{{ url_for('media.start_queue') }}" id="queue-form">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -137,7 +137,7 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button
               type="submit"
-              onclick="return confirm('Odtworzenie medium przełączy aktywną aplikację na odbiornik Cast. Kontynuować?')"
+              onclick="return confirm('Odtworzenie medium przełączy aktywną aplikację na odbiorniku Cast. Kontynuować?')"
             >
               {% if media.media_type == "image" %}Wyświetl{% else %}Odtwórz{% endif %}
             </button>
@@ -149,7 +149,7 @@
           <form method="post" action="{{ url_for('media.save_preset') }}" class="preset-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="filename" value="{{ media.filename }}">
-            <input name="name" placeholder="Nazwa preset" required>
+            <input name="name" placeholder="Nazwa presetu" required>
             <input name="volume" type="number" min="0" max="1" step="0.01" placeholder="Głośność">
             <input name="stop_after_seconds" type="number" min="1" step="1" placeholder="Stop po s">
             <button type="submit">Zapisz preset</button>
@@ -157,7 +157,7 @@
         </div>
       </article>
     {% else %}
-      <p class="muted">Brak obrazów w bibliotece.</p>
+      <p class="muted">Brak mediów w bibliotece.</p>
     {% endfor %}
   </section>
 {% endblock %}

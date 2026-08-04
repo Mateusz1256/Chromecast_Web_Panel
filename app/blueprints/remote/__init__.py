@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, current_app, jsonify, render_template, request
 from flask_login import current_user, login_required
 
 from app.blueprints.dashboard import _safe_status
@@ -6,6 +6,17 @@ from app.services.cast_service import CastServiceError, CastUnsupportedCommand
 from app.services.rate_limiter import RateLimitExceeded
 
 remote_bp = Blueprint("remote", __name__, url_prefix="/remote")
+
+
+@remote_bp.get("/")
+@login_required
+def remote_panel():
+    settings = current_app.extensions["settings_service"].load()
+    return render_template(
+        "dashboard/remote.html",
+        status_refresh_seconds=settings["status_refresh_seconds"],
+        max_volume=settings["max_volume"],
+    )
 
 
 @remote_bp.post("/volume")
@@ -59,6 +70,12 @@ def resume():
 @login_required
 def stop():
     return _run_command("stop", lambda cast_service: cast_service.stop())
+
+
+@remote_bp.post("/quit-app")
+@login_required
+def quit_app():
+    return _run_command("quit_app", lambda cast_service: cast_service.quit_app())
 
 
 @remote_bp.post("/seek")

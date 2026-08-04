@@ -15,9 +15,14 @@ flask --app wsgi:app init-admin
 
 ## Dashboard
 
-The dashboard shows the Cast device status and basic remote controls. Native
-apps may not expose standard media status; in that case the panel shows a clear
-message instead of a traceback.
+The Status page shows the Cast device status, active app, standby/input state,
+volume and available media metadata. Native apps may not expose standard media
+status; in that case the panel shows a clear message instead of a traceback.
+
+The Pilot page contains playback controls, volume controls, mute/unmute, seek
+and a `Close Cast app` action. PyChromecast does not provide a stable physical
+TV power on/off command, so the panel only closes the active Cast application
+when the receiver supports it.
 
 ## Media
 
@@ -53,4 +58,3 @@ Restore on a separate copy first:
 ```sh
 scripts/restore.sh backups/<archive>.tar.gz
 ```
-
