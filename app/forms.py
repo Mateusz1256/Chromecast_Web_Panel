@@ -18,7 +18,10 @@ class LoginForm(FlaskForm):
 
 class SettingsForm(FlaskForm):
     cast_ip = StringField("Adres IP urządzenia Cast", validators=[DataRequired()])
-    nas_lan_ip = StringField("Adres IP NAS w sieci LAN", validators=[DataRequired()])
+    nas_lan_ip = StringField(
+        "Adres IP serwera w sieci LAN",
+        validators=[DataRequired()],
+    )
     app_port = IntegerField(
         "Port aplikacji",
         validators=[DataRequired(), NumberRange(min=1, max=65535)],

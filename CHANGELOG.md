@@ -51,3 +51,5 @@ Versioning.
 - Load `.env` before application configuration reads environment variables.
 - Settings form labels and loading/status messages now follow the selected
   interface language.
+- Settings label now describes the media URL host as the server LAN IP address
+  instead of a NAS-specific address.

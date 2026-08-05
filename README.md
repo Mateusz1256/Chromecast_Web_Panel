@@ -186,8 +186,11 @@ types.
 The URL sent to Cast is built from the configured local host IP and app port:
 
 ```text
-http://<nas_lan_ip>:<app_port>/media/files/<filename>
+http://<server_lan_ip>:<app_port>/media/files/<filename>
 ```
+
+In the settings file this value is still stored as `nas_lan_ip` for backward
+compatibility, but it means the LAN IP address of the server running this app.
 
 For audio playback, the app can apply `default_audio_volume`, capped by
 `max_volume`, and restore the previous volume after `Stop`.
