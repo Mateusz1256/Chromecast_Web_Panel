@@ -80,6 +80,8 @@ def test_settings_page_contains_interface_preferences(app, client):
     assert "Polski" in page
     assert "English" in page
     assert "data-theme-switch" in page
+    assert 'data-i18n="settings.form.cast_ip"' in page
+    assert 'data-i18n="settings.form.submit"' in page
 
 
 def test_invalid_login_is_rejected(app, client):

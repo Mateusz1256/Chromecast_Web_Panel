@@ -25,6 +25,17 @@
       "settings.language.help": "Wybierz język interfejsu.",
       "settings.language.label": "Język interfejsu",
       "settings.app.title": "Ustawienia",
+      "settings.form.cast_ip": "Adres IP urządzenia Cast",
+      "settings.form.nas_lan_ip": "Adres IP NAS w sieci LAN",
+      "settings.form.app_port": "Port aplikacji",
+      "settings.form.media_directory": "Katalog multimediów",
+      "settings.form.max_upload_mb": "Maksymalny rozmiar pliku w MB",
+      "settings.form.max_volume": "Maksymalna głośność",
+      "settings.form.default_audio_volume": "Domyślna głośność audio",
+      "settings.form.cast_timeout_seconds": "Limit czasu Cast w sekundach",
+      "settings.form.status_refresh_seconds": "Odświeżanie statusu w sekundach",
+      "settings.form.monitor_app_changes": "Monitoruj zmianę aktywnej aplikacji",
+      "settings.form.submit": "Zapisz",
       "media.library.eyebrow": "Biblioteka",
       "media.library.title": "Media",
       "media.stop_playback": "Zatrzymaj odtwarzanie",
@@ -52,6 +63,9 @@
       "media.empty": "Brak mediów w bibliotece.",
       "status.eyebrow": "Status",
       "status.title": "Urządzenie Cast",
+      "status.loading": "Ładowanie",
+      "status.loading_message": "Ładowanie statusu urządzenia.",
+      "status.loading_short": "Ładowanie statusu.",
       "status.receiver": "Odbiornik",
       "status.state": "Stan",
       "status.input": "Wejście",
@@ -108,6 +122,17 @@
       "settings.language.help": "Choose the interface language.",
       "settings.language.label": "Interface language",
       "settings.app.title": "Settings",
+      "settings.form.cast_ip": "Cast device IP address",
+      "settings.form.nas_lan_ip": "NAS LAN IP address",
+      "settings.form.app_port": "Application port",
+      "settings.form.media_directory": "Media directory",
+      "settings.form.max_upload_mb": "Maximum file size in MB",
+      "settings.form.max_volume": "Maximum volume",
+      "settings.form.default_audio_volume": "Default audio volume",
+      "settings.form.cast_timeout_seconds": "Cast timeout in seconds",
+      "settings.form.status_refresh_seconds": "Status refresh in seconds",
+      "settings.form.monitor_app_changes": "Monitor active app changes",
+      "settings.form.submit": "Save",
       "media.library.eyebrow": "Library",
       "media.library.title": "Media",
       "media.stop_playback": "Stop playback",
@@ -135,6 +160,9 @@
       "media.empty": "No media in the library.",
       "status.eyebrow": "Status",
       "status.title": "Cast device",
+      "status.loading": "Loading",
+      "status.loading_message": "Loading device status.",
+      "status.loading_short": "Loading status.",
       "status.receiver": "Receiver",
       "status.state": "State",
       "status.input": "Input",
@@ -206,6 +234,7 @@
       element.placeholder = translate(element.dataset.i18nPlaceholder);
     });
     updateFileName();
+    window.dispatchEvent(new CustomEvent("cast-panel-language-changed"));
   }
 
   function updateFileName() {
@@ -241,4 +270,6 @@
   if (fileInput) {
     fileInput.addEventListener("change", updateFileName);
   }
+
+  window.castPanelTranslate = translate;
 }());

@@ -42,20 +42,20 @@
     <form method="post">
       {{ form.hidden_tag() }}
       <div class="grid">
-        {% for field in [
-          form.cast_ip,
-          form.nas_lan_ip,
-          form.app_port,
-          form.media_directory,
-          form.max_upload_mb,
-          form.max_volume,
-          form.default_audio_volume,
-          form.cast_timeout_seconds,
-          form.status_refresh_seconds,
-          form.monitor_app_changes
+        {% for field, label_key, label_text in [
+          (form.cast_ip, "settings.form.cast_ip", "Adres IP urządzenia Cast"),
+          (form.nas_lan_ip, "settings.form.nas_lan_ip", "Adres IP NAS w sieci LAN"),
+          (form.app_port, "settings.form.app_port", "Port aplikacji"),
+          (form.media_directory, "settings.form.media_directory", "Katalog multimediów"),
+          (form.max_upload_mb, "settings.form.max_upload_mb", "Maksymalny rozmiar pliku w MB"),
+          (form.max_volume, "settings.form.max_volume", "Maksymalna głośność"),
+          (form.default_audio_volume, "settings.form.default_audio_volume", "Domyślna głośność audio"),
+          (form.cast_timeout_seconds, "settings.form.cast_timeout_seconds", "Limit czasu Cast w sekundach"),
+          (form.status_refresh_seconds, "settings.form.status_refresh_seconds", "Odświeżanie statusu w sekundach"),
+          (form.monitor_app_changes, "settings.form.monitor_app_changes", "Monitoruj zmianę aktywnej aplikacji")
         ] %}
           <label>
-            {{ field.label }}
+            <span data-i18n="{{ label_key }}">{{ label_text }}</span>
             {{ field() }}
             {% for error in field.errors %}
               <span class="error">{{ error }}</span>
@@ -63,7 +63,7 @@
           </label>
         {% endfor %}
       </div>
-      {{ form.submit() }}
+      <button type="submit" data-i18n="settings.form.submit">Zapisz</button>
     </form>
   </section>
 {% endblock %}

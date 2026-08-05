@@ -49,3 +49,5 @@ Versioning.
 ### Fixed
 
 - Load `.env` before application configuration reads environment variables.
+- Settings form labels and loading/status messages now follow the selected
+  interface language.

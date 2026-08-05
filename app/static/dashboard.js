@@ -19,6 +19,10 @@
       refreshed: "Status odświeżony.",
       unavailable: "Urządzenie niedostępne.",
       refresh_failed: "Nie udało się odświeżyć statusu.",
+      no_standard_media: "Aktywna aplikacja nie udostępnia standardowego statusu mediów.",
+      cast_not_found: "Skonfigurowane urządzenie Cast nie zostało znalezione.",
+      cast_ip_missing: "Adres IP urządzenia Cast nie jest skonfigurowany.",
+      unexpected_error: "Nieoczekiwany błąd statusu Cast.",
       sending: "Wysyłanie komendy...",
       command_done: "Komenda wykonana.",
       command_failed: "Nie udało się wykonać komendy.",
@@ -46,6 +50,10 @@
       refreshed: "Status refreshed.",
       unavailable: "Device unavailable.",
       refresh_failed: "Could not refresh status.",
+      no_standard_media: "Active application does not expose standard media status.",
+      cast_not_found: "Configured Cast device was not found.",
+      cast_ip_missing: "Cast IP is not configured.",
+      unexpected_error: "Unexpected Cast status error.",
       sending: "Sending command...",
       command_done: "Command completed.",
       command_failed: "Could not run command.",
@@ -144,6 +152,19 @@
     return currentLabels().unknown;
   }
 
+  function statusMessage(message) {
+    var knownMessages = {
+      "Active application does not expose standard media status": "no_standard_media",
+      "Configured Cast device was not found": "cast_not_found",
+      "Cast IP is not configured": "cast_ip_missing",
+      "Unexpected Cast status error": "unexpected_error"
+    };
+    if (knownMessages[message]) {
+      return currentLabels()[knownMessages[message]];
+    }
+    return message;
+  }
+
   function updateBadge(online) {
     var badge = document.getElementById("online-badge");
     if (!badge) {
@@ -196,7 +217,9 @@
     setText("player-state", media.player_state);
     setText(
       "status-message",
-      status.message || (status.online ? currentLabels().refreshed : currentLabels().unavailable)
+      status.message
+        ? statusMessage(status.message)
+        : (status.online ? currentLabels().refreshed : currentLabels().unavailable)
     );
     updateBadge(Boolean(status.online));
     renderMedia(media);
@@ -344,6 +367,10 @@
       sendRemoteCommand("seek");
     });
   }
+
+  window.addEventListener("cast-panel-language-changed", function () {
+    render({ status: lastStatus });
+  });
 
   window.addEventListener("beforeunload", function () {
     if (controller !== null) {

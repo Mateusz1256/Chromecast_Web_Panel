@@ -54,6 +54,7 @@ def test_login_redirects_to_dashboard(app, client):
 
     assert response.status_code == 200
     assert "Urządzenie Cast" in response.get_data(as_text=True)
+    assert 'data-i18n="status.loading"' in response.get_data(as_text=True)
 
 
 def test_status_returns_cast_status(app, client):

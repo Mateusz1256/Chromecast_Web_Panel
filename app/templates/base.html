@@ -7,7 +7,9 @@
     <script>
       (function () {
         var theme = window.localStorage.getItem("cast-panel-theme") || "dark";
+        var language = window.localStorage.getItem("cast-panel-language") || "pl";
         document.documentElement.dataset.theme = theme;
+        document.documentElement.lang = language === "en" ? "en" : "pl";
       }());
     </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
